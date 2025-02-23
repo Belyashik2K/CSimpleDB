@@ -11,10 +11,12 @@ typedef struct {
     CustomInt geo_id;
     CustomString geo_pos;
     Date mea_date;
-    Time sunrise;
     CustomInt level;
+    Time sunrise;
     Weather weather;
     Time sundown;
 } Record;
+
+Record *recordFactory(char *recordString);
 
 #endif

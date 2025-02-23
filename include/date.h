@@ -8,8 +8,8 @@ typedef struct {
 } Date;
 
 
-int is_leap_year(int year);
-int is_valid_date(int day, int month, int year);
+// int is_leap_year(int year);
+// int is_valid_date(int day, int month, int year);
 Date *dateFactory(const char *dateString);
 
 #endif

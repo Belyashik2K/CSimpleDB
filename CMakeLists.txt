@@ -17,4 +17,6 @@ add_executable(
         include/string.h
         src/int.c
         src/string.c
+        include/comparison.h
+        src/record.c
 )

@@ -42,6 +42,13 @@ CustomString *stringFactory(char *string) {
 
     CustomString *customString = malloc(sizeof(CustomString));
     if (customString == NULL) return NULL;
-    customString->value = string;
+
+    customString->value = malloc(strlen(string) + 1);
+    if (customString->value == NULL) {
+        free(customString);
+        return NULL;
+    }
+
+    strcpy(customString->value, string);
     return customString;
 }

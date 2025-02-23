@@ -2,10 +2,10 @@
 #include "../include/weather.h"
 
 const char *weather_strings[] = {
-    "fair",
-    "rain",
-    "cloudy",
-    "snow"
+    "'fair'",
+    "'rain'",
+    "'cloudy'",
+    "'snow'"
 };
 
 const char *weather_to_string(const Weather weather) {
