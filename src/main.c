@@ -1,10 +1,5 @@
 #include <stdio.h>
-#include "../include/time.h"
-#include "../include/date.h"
-#include "../include/weather.h"
-#include "../include/string.h"
-#include "../include/int.h"
-#include "../include/record.h"
+#include "../src/database/record/record.h"
 
 int main(void) {
 

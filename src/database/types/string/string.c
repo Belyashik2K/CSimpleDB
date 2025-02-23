@@ -1,7 +1,7 @@
-#include "../include/string.h"
-
-#include <stdio.h>
 #include <stdlib.h>
+
+#include "../string/string.h"
+
 #include <string.h>
 
 int checkForScreening(const char previous, const int index) {

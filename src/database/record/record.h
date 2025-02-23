@@ -1,11 +1,11 @@
 #ifndef RECORD_H
 #define RECORD_H
 
-#include "../include/time.h"
-#include "../include/weather.h"
-#include "../include/date.h"
-#include "../include/int.h"
-#include "../include/string.h"
+#include "../types/int/int.h"
+#include "../types/string/string.h"
+#include "../types/date/date.h"
+#include "../types/time/time.h"
+#include "../types/weather/weather.h"
 
 typedef struct {
     CustomInt geo_id;

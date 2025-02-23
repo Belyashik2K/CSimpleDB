@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/record.h"
+#include "../record/record.h"
 
 static int skipInsert(const char *recordString) {
     return recordString && strncmp(recordString, "insert ", 7) == 0;

@@ -6,17 +6,17 @@ set(CMAKE_C_STANDARD 11)
 add_executable(
         SimpleDB
         src/main.c
-        src/date.c
-        src/time.c
-        src/weather.c
-        include/date.h
-        include/time.h
-        include/weather.h
-        include/record.h
-        include/int.h
-        include/string.h
-        src/int.c
-        src/string.c
-        include/comparison.h
-        src/record.c
+        src/database/types/date/date.c
+        src/database/types/time/time.c
+        src/database/types/weather/weather.c
+        src/database/types/date/date.h
+        src/database/types/time/time.h
+        src/database/types/weather/weather.h
+        src/database/record/record.h
+        src/database/types/int/int.h
+        src/database/types/string/string.h
+        src/database/types/int/int.c
+        src/database/types/string/string.c
+        src/database/types/comparison/comparison.h
+        src/database/record/record.c
 )

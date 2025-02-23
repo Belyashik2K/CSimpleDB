@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/time.h"
+#include "../time/time.h"
 
 Time *timeFactory(const char *timeString) {
     int hour, minute, second;

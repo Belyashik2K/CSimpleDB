@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/date.h"
+#include "../date/date.h"
 
 
 int is_leap_year(const int year) {
