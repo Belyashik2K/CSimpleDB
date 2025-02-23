@@ -1,8 +1,9 @@
-#include "../include/record.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../include/record.h"
 
 static int skipInsert(const char *recordString) {
     return recordString && strncmp(recordString, "insert ", 7) == 0;
