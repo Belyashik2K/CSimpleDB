@@ -87,6 +87,8 @@ int parseFile(const char *filename, Database *database) {
         parserAbstractFactory(line, database);
     }
 
+    printDatabase(database);
+
     fclose(file);
 
     return 1;

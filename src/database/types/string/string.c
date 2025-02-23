@@ -3,6 +3,8 @@
 
 #include "../string/string.h"
 
+#include <stdio.h>
+
 int checkForScreening(const char previous, const int index) {
     return index < 0 ? 0 : previous == (char) 92 ? 1 : 0;
 }
@@ -29,7 +31,15 @@ int checkBackslashScreening(const char *string, int *index) {
     return 0;
 }
 
-CustomString *stringFactory(char *string) {
+char *stringToString(CustomString *self) {
+    const int bufSize = strlen(self->field) + strlen(self->value) + 50;
+    char *buffer = malloc(bufSize);
+    if (!buffer) return NULL;
+    snprintf(buffer, bufSize, "%s=%s", self->field, self->value);
+    return buffer;
+}
+
+CustomString *stringFactory(char *string, const char *field) {
     for (int i = strlen(string) - 2; i > 0 ; i--) {
         if (!checkBackslashScreening(string, &i)) {
             return NULL;
@@ -49,5 +59,14 @@ CustomString *stringFactory(char *string) {
     }
 
     strcpy(customString->value, string);
+
+    customString->field = strdup(field);
+    if (customString->field == NULL) {
+        free(customString->value);
+        free(customString);
+        return NULL;
+    }
+    customString->toString = stringToString;
+
     return customString;
 }

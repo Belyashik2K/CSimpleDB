@@ -59,7 +59,15 @@ int isInsideIntBounds(const char *str, const int isNegative) {
     return 1;
 }
 
-CustomInt *intFactory(char *intString) {
+char *intToString(const CustomInt *self) {
+    const int bufSize = strlen(self->field) + 50;
+    char *buffer = malloc(bufSize);
+    if (!buffer) return NULL;
+    snprintf(buffer, bufSize, "%s=%d", self->field, self->value);
+    return buffer;
+}
+
+CustomInt *intFactory(char *intString, const char *field) {
     int value;
     const int isNegative = isValueNegative(intString);
     if (isNegative) {
@@ -89,5 +97,14 @@ CustomInt *intFactory(char *intString) {
     CustomInt *customInt = malloc(sizeof(CustomInt));
     if (customInt == NULL) return NULL;
     customInt->value = value;
+
+    customInt->field = strdup(field);
+    if (!customInt->field) {
+        free(customInt);
+        return NULL;
+    }
+
+    customInt->toString = intToString;
+
     return customInt;
 }

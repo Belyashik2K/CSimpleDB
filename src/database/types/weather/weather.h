@@ -7,11 +7,15 @@ typedef enum {
     CLOUDY,
     SNOW,
     WEATHER_COUNT
+} WeatherEnum;
+
+typedef struct Weather {
+    WeatherEnum value;
+    char *field;
+
+    char *(*toString)(struct Weather *self);
 } Weather;
 
-extern const char *weather_strings[];
-
-const char *weather_to_string(Weather weather);
-Weather weather_from_string(const char *str);
+Weather *weatherFactory(const char *weatherString, const char *field);
 
 #endif

@@ -2,6 +2,9 @@
 
 #include "../weather/weather.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 const char *weather_strings[] = {
     "'fair'",
     "'rain'",
@@ -9,18 +12,31 @@ const char *weather_strings[] = {
     "'snow'"
 };
 
-const char *weather_to_string(const Weather weather) {
-    if (weather >= WEATHER_COUNT) {
-        return "unknown";
-    }
-    return weather_strings[weather];
+char *weatherToString(Weather *self) {
+    const int bufSize = strlen(self->field) + strlen(weather_strings[self->value]) + 50;
+    char *buffer = malloc(bufSize);
+    if (!buffer) return NULL;
+    snprintf(buffer, bufSize, "%s=%s", self->field, weather_strings[self->value]);
+    return buffer;
 }
 
-Weather weather_from_string(const char *str) {
+Weather *weatherFactory(const char *weatherString, const char *field) {
     for (int i = 0; i < WEATHER_COUNT; i++) {
-        if (strcmp(str, weather_strings[i]) == 0) {
-            return (Weather) i;
+        if (strcmp(weatherString, weather_strings[i]) == 0) {
+            Weather *weather = malloc(sizeof(Weather));
+            if (!weather) return NULL;
+
+            weather->value = (WeatherEnum) i;
+            weather->field = strdup(field);
+            if (!weather->field) {
+                free(weather);
+                return NULL;
+            }
+
+            weather->toString = weatherToString;
+
+            return weather;
         }
     }
-    return WEATHER_COUNT;
+    return NULL;
 }

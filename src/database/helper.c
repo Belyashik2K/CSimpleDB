@@ -30,22 +30,17 @@ void printDatabase(Database *db) {
 
     const RecordNode *current = db->head;
     while (current) {
-        const Record *r = current->data;
-        printf("Record: %d, %s, '%02d.%02d.%04d', %d, '%02d:%02d:%02d', %s, '%02d:%02d:%02d'\n",
-               r->geo_id.value,
-               r->geo_pos.value,
-               r->mea_date.day,
-               r->mea_date.month,
-               r->mea_date.year,
-               r->level.value,
-               r->sunrise.hour,
-               r->sunrise.minute,
-               r->sunrise.second,
-               weather_to_string(r->weather),
-               r->sundown.hour,
-               r->sundown.minute,
-               r->sundown.second
+        Record *r = current->data;
+        printf("Record: %s %s %s %s %s %s %s\n",
+               r->geo_id.toString(&r->geo_id),
+               r->geo_pos.toString(&r->geo_pos),
+               r->mea_date.toString(&r->mea_date),
+               r->level.toString(&r->level),
+               r->sunrise.toString(&r->sunrise),
+               r->weather.toString(&r->weather),
+               r->sundown.toString(&r->sundown)
         );
+
         current = current->next;
     }
 }

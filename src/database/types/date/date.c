@@ -35,7 +35,15 @@ int is_valid_date(
     return 1;
 }
 
-Date *dateFactory(const char *dateString) {
+char *dateToString(const Date *self) {
+    const int bufSize = strlen(self->field) + 50;
+    char *buffer = malloc(bufSize);
+    if (!buffer) return NULL;
+    snprintf(buffer, bufSize, "%s='%02d.%02d.%02d'", self->field, self->day, self->month, self->year);
+    return buffer;
+}
+
+Date *dateFactory(const char *dateString, const char *field) {
     int day, month, year;
 
     if (
@@ -52,6 +60,14 @@ Date *dateFactory(const char *dateString) {
     date->day = (char) day;
     date->month = (char) month;
     date->year = (short) year;
+
+    date->field = strdup(field);
+    if (!date->field) {
+        free(date);
+        return NULL;
+    }
+
+    date->toString = dateToString;
 
     return date;
 }

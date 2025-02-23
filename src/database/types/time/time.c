@@ -4,7 +4,15 @@
 
 #include "../time/time.h"
 
-Time *timeFactory(const char *timeString) {
+char *timeToString(const Time *self) {
+    const int bufSize = strlen(self->field) + 50;
+    char *buffer = malloc(bufSize);
+    if (!buffer) return NULL;
+    snprintf(buffer, bufSize, "%s='%02d:%02d:%02d'", self->field, self->hour, self->minute, self->second);
+    return buffer;
+}
+
+Time *timeFactory(const char *timeString, const char *field) {
     int hour, minute, second;
 
     if (sscanf(timeString, "'%d:%d:%d'", &hour, &minute, &second) != 3 ||
@@ -21,6 +29,14 @@ Time *timeFactory(const char *timeString) {
     time->hour = (char) hour;
     time->minute = (char) minute;
     time->second = (char) second;
+
+    time->field = strdup(field);
+    if (!time->field) {
+        free(time);
+        return NULL;
+    }
+
+    time->toString = timeToString;
 
     return time;
 }

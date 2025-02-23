@@ -1,12 +1,15 @@
 #ifndef TIME_H
 #define TIME_H
 
-typedef struct {
+typedef struct Time {
     char hour;
     char minute;
     char second;
+    char *field;
+
+    char *(*toString)(struct Time *self);
 } Time;
 
-Time *timeFactory(const char *timeString);
+Time *timeFactory(const char *timeString, const char *field);
 
 #endif
