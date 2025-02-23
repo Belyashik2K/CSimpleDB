@@ -9,7 +9,7 @@ int checkForScreening(const char previous, const int index) {
     return index < 0 ? 0 : previous == (char) 92 ? 1 : 0;
 }
 
-int checkDoubleQuotesScreening(const char *string, int* index) {
+int checkDoubleQuotesScreening(const char *string, int *index) {
     if (string[*index] != '"') {
         return 1;
     }
@@ -40,7 +40,11 @@ char *stringToString(CustomString *self) {
 }
 
 CustomString *stringFactory(char *string, const char *field) {
-    for (int i = strlen(string) - 2; i > 0 ; i--) {
+    if (string[0] != '"' || string[strlen(string) - 1] != '"') {
+        return NULL;
+    }
+
+    for (int i = strlen(string) - 2; i > 0; i--) {
         if (!checkBackslashScreening(string, &i)) {
             return NULL;
         }
