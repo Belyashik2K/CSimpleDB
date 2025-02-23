@@ -20,7 +20,6 @@ int checkDoubleQuotesScreening(const char *string, int* index) {
 }
 
 int checkBackslashScreening(const char *string, int *index) {
-    printf("%c, %c\n", string[*index], string[*index - 1]);
     if (string[*index] != (char) 92 || *index - 1 == 0) {
         return 1;
     }
