@@ -1,0 +1,10 @@
+*.o
+*.out
+*.exe
+*.a
+*.so
+*.swp
+.vscode/
+.idea/
+build/
+cmake-build-debug/
