@@ -1,8 +1,7 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "../string/string.h"
-
-#include <string.h>
 
 int checkForScreening(const char previous, const int index) {
     return index < 0 ? 0 : previous == (char) 92 ? 1 : 0;

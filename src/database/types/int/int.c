@@ -1,8 +1,8 @@
-#include "../int/int.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../int/int.h"
 
 int isValueNegative(const char *intString) {
     return intString[0] == '-';

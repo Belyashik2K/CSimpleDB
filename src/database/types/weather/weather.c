@@ -1,4 +1,5 @@
 #include <string.h>
+
 #include "../weather/weather.h"
 
 const char *weather_strings[] = {

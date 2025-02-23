@@ -12,11 +12,15 @@ add_executable(
         src/database/types/date/date.h
         src/database/types/time/time.h
         src/database/types/weather/weather.h
-        src/database/record/record.h
+        src/database/types/record/record.h
         src/database/types/int/int.h
         src/database/types/string/string.h
         src/database/types/int/int.c
         src/database/types/string/string.c
         src/database/types/comparison/comparison.h
-        src/database/record/record.c
+        src/database/types/record/record.c
+        src/database/initializer.c
+        src/database/initializer.h
+        src/database/types/helper.c
+        src/database/types/helper.h
 )
