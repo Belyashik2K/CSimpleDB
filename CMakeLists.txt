@@ -21,6 +21,10 @@ add_executable(
         src/database/types/record/record.c
         src/database/initializer.c
         src/database/initializer.h
-        src/database/types/helper.c
-        src/database/types/helper.h
+        src/database/helper.c
+        src/database/helper.h
+        src/utils/parser/file_parser.c
+        src/utils/parser/file_parser.h
+        src/database/types/action/action.h
+        src/database/types/action/action.c
 )

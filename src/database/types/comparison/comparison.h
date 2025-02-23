@@ -10,6 +10,6 @@ typedef enum {
     GREATER_OR_EQUAL,
     IN,
     NOT_IN
-} ComparisonOptions;
+} ComparisonOption;
 
 #endif
