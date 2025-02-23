@@ -19,4 +19,5 @@ int main(void) {
     }
 
     freeDatabase(database);
+    return 0;
 }
