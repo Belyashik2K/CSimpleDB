@@ -11,8 +11,6 @@ Database *initializeDatabase() {
     database->tail = NULL;
     database->size = 0;
 
-    printf("Database initialized\n");
-
     return database;
 }
 
@@ -27,6 +25,4 @@ void freeDatabase(Database *database) {
         current = next;
     }
     free(database);
-
-    printf("Database freed\n");
 }

@@ -2,6 +2,8 @@
 
 #include "../action/action.h"
 
+#include <stdio.h>
+
 const char *action_strings[] = {
     "insert",
     "delete",

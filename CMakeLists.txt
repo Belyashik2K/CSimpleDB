@@ -27,4 +27,6 @@ add_executable(
         src/utils/parser/file_parser.h
         src/database/types/action/action.h
         src/database/types/action/action.c
+        src/utils/writer/file_writer.c
+        src/utils/writer/file_writer.h
 )
