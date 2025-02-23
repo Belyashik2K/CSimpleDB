@@ -74,9 +74,11 @@ static KeyMap keyMappings[] = {
     {"weather", initializeWeather},
 };
 
-static int processKey(const char *key, char *value, Record *record) {
+static int processKey(const char *key, char *value, Record *record, int seen[7]) {
     for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
         if (strcmp(key, keyMappings[i].key) == 0) {
+            if (seen[i]) return 0;
+            seen[i] = 1;
             return keyMappings[i].func(record, value);
         }
     }
@@ -96,16 +98,25 @@ Record *recordFactory(char *recordString) {
     char *recordCopy = strdup(recordString);
     if (!recordCopy) return NULL;
     const char *token = strtok(recordCopy, ",");
+    char token_counter = 0;
+    int seen[7] = {0};
     while (token) {
         char key[20] = {0}, value[50] = {0};
 
         if (sscanf(token, " %19[^=]=%49[^\n]", key, value) == 2) {
-            if (!processKey(key, value, record)) {
+            if (!processKey(key, value, record, seen)) {
                 free(record);
                 return NULL;
             }
         }
         token = strtok(NULL, ",");
+        token_counter++;
     }
+
+    if (token_counter != 7) {
+        free(record);
+        return NULL;
+    }
+
     return record;
 }

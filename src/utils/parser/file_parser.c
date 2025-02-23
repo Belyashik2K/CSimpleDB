@@ -12,9 +12,11 @@ typedef int (*parserFunc)(char *, Database *);
 int insertParser(char *line, Database *database) {
     Record *record = recordFactory(line);
     if (!record) {
+        printf("incorrect:'%.20s'\n", line);
         return 0;
     }
     appendRecord(database, record);
+    printf("insert:%d\n", database->size);
     return 1;
 }
 
@@ -53,7 +55,7 @@ char *findAction(const char *line) {
     return lineCopy;
 }
 
-void redirectToConcreteParser(char *line, Database *database) {
+void parserAbstractFactory(char *line, Database *database) {
     const Action actionToEnum = action_from_string(findAction(line));
     for (int i = 0; i < ACTION_COUNT; i++) {
         if (actionToEnum == keyMappings[i].key) {
@@ -74,10 +76,10 @@ int parseFile(const char *filename, Database *database) {
         if (line[0] == '\n' || line[0] == '\0') {
             continue;
         }
-        redirectToConcreteParser(line, database);
+        parserAbstractFactory(line, database);
     }
 
-    printDatabase(database);
+    // printDatabase(database);
 
     fclose(file);
 
