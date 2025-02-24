@@ -36,7 +36,7 @@ void writeCountOfAffectedRecordsToFile(const Action action, const int count) {
 }
 
 void writeIncorrectLineToFile(const char *line) {
-    FILE *file = fopen("output.txt", "a");
+    FILE *file = fopen(OUTPUT_FILE, "a");
     if (!file) return;
 
     fprintf(file, "incorrect:'%.20s'\n", line);
