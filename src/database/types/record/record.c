@@ -28,14 +28,20 @@
 #define DEFINE_ALL_FUNCS(NAME, KEY_STR, FIELD, TYPE, FACTORY) \
     DEFINE_INIT_FUNC(NAME, FIELD, TYPE, FACTORY)              \
     DEFINE_PRINT_FUNC(NAME, FIELD)                            \
-    DEFINE_VALIDATE_FUNC(NAME, KEY_STR, FACTORY)
+    DEFINE_VALIDATE_FUNC(NAME, KEY_STR, FACTORY) \
 
 DEFINE_ALL_FUNCS(GeoId, "geo_id", geo_id, CustomInt, intFactory)
+
 DEFINE_ALL_FUNCS(GeoPos, "geo_pos", geo_pos, CustomString, stringFactory)
+
 DEFINE_ALL_FUNCS(MeaDate, "mea_date", mea_date, Date, dateFactory)
+
 DEFINE_ALL_FUNCS(Level, "level", level, CustomInt, intFactory)
+
 DEFINE_ALL_FUNCS(Sunrise, "sunrise", sunrise, Time, timeFactory)
+
 DEFINE_ALL_FUNCS(Sundown, "sundown", sundown, Time, timeFactory)
+
 DEFINE_ALL_FUNCS(Weather, "weather", weather, Weather, weatherFactory)
 
 typedef int (*init_func)(Record *, char *, char *);
@@ -44,21 +50,52 @@ typedef int (*print_func)(Record *);
 
 typedef int (*validate_func)(char *);
 
+typedef int (*compare_func)(Record *, char *, ComparisonOptionEnum);
+
 typedef struct {
     const char *key;
     init_func initialize;
     print_func print;
     validate_func validate;
+    compare_func compare;
 } KeyMap;
 
+int compareGeoId(Record *record, char *other, ComparisonOptionEnum option) {
+    return record->geo_id.compare(&record->geo_id, other, option);
+}
+
+int compareGeoPos(Record *record, char *other, ComparisonOptionEnum option) {
+    return record->geo_pos.compare(&record->geo_pos, other, option);
+}
+
+int compareMeaDate(Record *record, char *other, ComparisonOptionEnum option) {
+    return record->mea_date.compare(&record->mea_date, other, option);
+}
+
+int compareLevel(Record *record, char *other, ComparisonOptionEnum option) {
+    return record->level.compare(&record->level, other, option);
+}
+
+int compareSunrise(Record *record, char *other, ComparisonOptionEnum option) {
+    return record->sunrise.compare(&record->sunrise, other, option);
+}
+
+int compareSundown(Record *record, char *other, ComparisonOptionEnum option) {
+    return record->sundown.compare(&record->sundown, other, option);
+}
+
+int compareWeather(Record *record, char *other, ComparisonOptionEnum option) {
+    return record->weather.compare(&record->weather, other, option);
+}
+
 static KeyMap keyMappings[] = {
-    {"geo_id", initializeGeoId, printGeoId, validateGeoId},
-    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos},
-    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate},
-    {"level", initializeLevel, printLevel, validateLevel},
-    {"sunrise", initializeSunrise, printSunrise, validateSunrise},
-    {"sundown", initializeSundown, printSundown, validateSundown},
-    {"weather", initializeWeather, printWeather, validateWeather}
+    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId},
+    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos},
+    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate},
+    {"level", initializeLevel, printLevel, validateLevel, compareLevel},
+    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise},
+    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown},
+    {"weather", initializeWeather, printWeather, validateWeather, compareWeather}
 };
 
 int printKey(const char *key, Record *record) {
@@ -99,8 +136,13 @@ static int processKey(char *key, char *value, Record *record, int seen[7]) {
     return 0;
 }
 
-int compareMeaDate(Date *self, char *other, const ComparisonOptionEnum option) {
-    return self->compare(self, other, option);
+int isSatisfiedByCondition(Record *record, Condition *condition) {
+    for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
+        if (strcmp(condition->field, keyMappings[i].key) == 0) {
+            return keyMappings[i].compare(record, condition->value, condition->comparison->operator);
+        }
+    }
+    return 0;
 }
 
 Record *recordFactory(Query *query) {

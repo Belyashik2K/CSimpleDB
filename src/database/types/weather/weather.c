@@ -34,6 +34,7 @@ Weather *weatherFactory(const char *weatherString, const char *field) {
             }
 
             weather->toString = weatherToString;
+            weather->compare = NULL;
 
             return weather;
         }

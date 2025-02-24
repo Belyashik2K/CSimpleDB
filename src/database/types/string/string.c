@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 
+
 int checkForScreening(const char previous, const int index) {
     return index < 0 ? 0 : previous == (char) 92 ? 1 : 0;
 }
@@ -39,6 +40,67 @@ char *stringToString(CustomString *self) {
     return buffer;
 }
 
+int equalString(const CustomString *self, char *other) {
+    CustomString *otherString = stringFactory(other, self->field);
+    if (!otherString) return 0;
+
+    int result = strcmp(self->value, otherString->value) == 0;
+    free(otherString);
+
+    return result;
+}
+
+int notEqualString(const CustomString *self, char *other) {
+    return !equalString(self, other);
+}
+
+int lessString(const CustomString *self, char *other) {
+    CustomString *otherString = stringFactory(other, self->field);
+    if (!otherString) return 0;
+
+    int result = strcmp(self->value, otherString->value) < 0;
+    free(otherString);
+
+    return result;
+}
+
+int greaterString(const CustomString *self, char *other) {
+    CustomString *otherString = stringFactory(other, self->field);
+    if (!otherString) return 0;
+
+    int result = strcmp(self->value, otherString->value) > 0;
+    free(otherString);
+
+    return result;
+}
+
+int lessOrEqualString(const CustomString *self, char *other) {
+    return lessString(self, other) || equalString(self, other);
+}
+
+int greaterOrEqualString(const CustomString *self, char *other) {
+    return greaterString(self, other) || equalString(self, other);
+}
+
+int compareStrings(const CustomString *self, char *other, ComparisonOptionEnum option) {
+    switch (option) {
+        case EQUAL:
+            return equalString(self, other);
+        case NOT_EQUAL:
+            return notEqualString(self, other);
+        case LESS:
+            return lessString(self, other);
+        case GREATER:
+            return greaterString(self, other);
+        case LESS_OR_EQUAL:
+            return lessOrEqualString(self, other);
+        case GREATER_OR_EQUAL:
+            return greaterOrEqualString(self, other);
+        default:
+            return 0;
+    }
+}
+
 CustomString *stringFactory(char *string, const char *field) {
     if (string[0] != '"' || string[strlen(string) - 1] != '"') {
         return NULL;
@@ -71,6 +133,7 @@ CustomString *stringFactory(char *string, const char *field) {
         return NULL;
     }
     customString->toString = stringToString;
+    customString->compare = compareStrings;
 
     return customString;
 }

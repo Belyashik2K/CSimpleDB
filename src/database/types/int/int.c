@@ -67,6 +67,56 @@ char *intToString(const CustomInt *self) {
     return buffer;
 }
 
+int equalInt(const CustomInt *self, char *other) {
+    CustomInt *otherInt = intFactory(other, self->field);
+    if (!otherInt) return 0;
+
+    return self->value == otherInt->value;
+}
+
+int notEqualInt(const CustomInt *self, char *other) {
+    return !equalInt(self, other);
+}
+
+int lessInt(const CustomInt *self, char *other) {
+    CustomInt *otherInt = intFactory(other, self->field);
+    if (!otherInt) return 0;
+
+    return self->value < otherInt->value;
+}
+
+int greaterInt(const CustomInt *self, char *other) {
+    return !lessInt(self, other) && notEqualInt(self, other);
+}
+
+int lessOrEqualInt(const CustomInt *self, char *other) {
+    return lessInt(self, other) || equalInt(self, other);
+}
+
+int greaterOrEqualInt(const CustomInt *self, char *other) {
+    return greaterInt(self, other) || equalInt(self, other);
+}
+
+int compareInts(const CustomInt *self, char *other, ComparisonOptionEnum option) {
+    switch (option) {
+        case EQUAL:
+            return equalInt(self, other);
+        case NOT_EQUAL:
+            return notEqualInt(self, other);
+        case LESS:
+            return lessInt(self, other);
+        case GREATER:
+            return greaterInt(self, other);
+        case LESS_OR_EQUAL:
+            return lessOrEqualInt(self, other);
+        case GREATER_OR_EQUAL:
+            return greaterOrEqualInt(self, other);
+        default:
+            return 0;
+    }
+}
+
+
 CustomInt *intFactory(char *intString, const char *field) {
     int value;
     const int isNegative = isValueNegative(intString);
@@ -105,6 +155,7 @@ CustomInt *intFactory(char *intString, const char *field) {
     }
 
     customInt->toString = intToString;
+    customInt->compare = compareInts;
 
     return customInt;
 }

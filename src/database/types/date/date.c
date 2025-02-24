@@ -81,7 +81,7 @@ int greaterOrEqualDate(const Date *self, char *other) {
     return greaterDate(self, other) || equalDate(self, other);
 }
 
-int compareDates(const Date *self, char *other, const ComparisonOptionEnum option) {
+int compareDates(const Date *self, char *other, ComparisonOptionEnum option) {
     switch (option) {
         case EQUAL:
             return equalDate(self, other);
