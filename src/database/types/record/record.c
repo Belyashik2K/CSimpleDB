@@ -99,6 +99,10 @@ static int processKey(char *key, char *value, Record *record, int seen[7]) {
     return 0;
 }
 
+int compareMeaDate(Date *self, char *other, const ComparisonOptionEnum option) {
+    return self->compare(self, other, option);
+}
+
 Record *recordFactory(Query *query) {
     Record *record = malloc(sizeof(Record));
     if (!record)

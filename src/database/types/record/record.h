@@ -28,5 +28,6 @@ Record *recordFactory(Query *query);
 int printKey(const char *key, Record *record);
 int validateKey(char *key);
 int validateValue(char *key, char *value);
+int compareMeaDate(Date *self, char *other, const ComparisonOptionEnum option);
 
 #endif

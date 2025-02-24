@@ -36,7 +36,21 @@ int makeSelectQuery(Database *db, Query *query) {
     const RecordNode *current = db->head;
     while (current) {
         if (query->condition_count) {
-            return 0;
+            int not_satisfy = 0;
+            for (int i = 0; i < query->condition_count; i++) {
+                if (!compareMeaDate(
+                        &current->data->mea_date,
+                        query->conditions[i].value,
+                        query->conditions[i].comparison->operator
+                    )
+                ) {
+                    not_satisfy = 1;
+                }
+            }
+            if (not_satisfy) {
+                current = current->next;
+                continue;
+            }
         }
 
         for (int i = 0; i < query->field_count; i++) {
