@@ -36,7 +36,7 @@ char *stringToString(CustomString *self) {
     const int bufSize = strlen(self->field) + strlen(self->value) + 50;
     char *buffer = malloc(bufSize);
     if (!buffer) return NULL;
-    snprintf(buffer, bufSize, "%s=%s", self->field, self->value);
+    snprintf(buffer, bufSize, "%s=\"%s\"", self->field, self->value);
     return buffer;
 }
 
