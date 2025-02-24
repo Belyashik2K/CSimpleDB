@@ -69,6 +69,11 @@ int validateFieldsAndConditions(Query *query) {
     for (int i = 0; i < query->field_count; i++) {
         const QueryField field = query->fields[i];
 
+        if (!validateKey(field.field)) {
+            printf("Invalid field: %s\n", field.field);
+            return 0;
+        }
+
         if (query->action.value == SELECT) {
             break;
         }
@@ -81,6 +86,12 @@ int validateFieldsAndConditions(Query *query) {
 
     for (int i = 0; i < query->condition_count; i++) {
         const Condition condition = query->conditions[i];
+
+        if (!validateKey(condition.field)) {
+            printf("Invalid condition: %s\n", condition.field);
+            return 0;
+        }
+
         if (!validateValue(condition.field, condition.value)) {
             printf("Invalid value for condition: %s\n", condition.field);
             return 0;
