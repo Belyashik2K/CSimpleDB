@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "../../database/types/action/action.h"
+#include "../../database/types/query/action/action.h"
 
 #define OUTPUT_FILE "../output.txt"
 
@@ -12,7 +12,7 @@ void prepareOutputFile() {
     fclose(file);
 }
 
-void writeCountOfAffectedRecordsToFile(const Action action, const int count) {
+void writeCountOfAffectedRecordsToFile(const ActionEnum action, const int count) {
     FILE *file = fopen(OUTPUT_FILE, "a");
     if (!file) return;
 

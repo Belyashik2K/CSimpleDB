@@ -4,7 +4,8 @@
 #include "../writer/file_writer.h"
 #include "../../database/helper.h"
 #include "../../database/initializer.h"
-#include "../../database/types/action/action.h"
+#include "../../database/types/query/action/action.h"
+#include "../../database/types/query/query.h"
 
 #define MAX_LINE_LENGTH 1024
 
@@ -45,7 +46,7 @@ int incorrectParser(char *line, Database *database) {
 }
 
 typedef struct {
-    Action key;
+    ActionEnum key;
     parserFunc func;
 } KeyMap;
 
@@ -64,9 +65,13 @@ char *findAction(const char *line) {
 }
 
 void parserAbstractFactory(char *line, Database *database) {
-    const Action actionToEnum = action_from_string(findAction(line));
+    Action *action = actionFactory(findAction(line));
+    if (!action) {
+        incorrectParser(line, database);
+        return;
+    }
     for (int i = 0; i <= ACTION_COUNT; i++) {
-        if (actionToEnum == keyMappings[i].key) {
+        if (action->value == keyMappings[i].key) {
             keyMappings[i].func(line, database);
             break;
         }
@@ -84,6 +89,7 @@ int parseFile(const char *filename, Database *database) {
         if (line[0] == '\n' || line[0] == '\0') {
             continue;
         }
+        Query *query = queryFactory(line);
         parserAbstractFactory(line, database);
     }
 

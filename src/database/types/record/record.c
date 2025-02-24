@@ -101,6 +101,7 @@ Record *recordFactory(char *recordString) {
     const char *token = strtok(recordCopy, ",");
     char token_counter = 0;
     int seen[7] = {0};
+
     while (token) {
         char key[20] = {0}, value[50] = {0};
 

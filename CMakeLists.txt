@@ -17,7 +17,7 @@ add_executable(
         src/database/types/string/string.h
         src/database/types/int/int.c
         src/database/types/string/string.c
-        src/database/types/comparison/comparison.h
+        src/database/types/query/comparison/comparison.h
         src/database/types/record/record.c
         src/database/initializer.c
         src/database/initializer.h
@@ -25,8 +25,12 @@ add_executable(
         src/database/helper.h
         src/utils/parser/file_parser.c
         src/utils/parser/file_parser.h
-        src/database/types/action/action.h
-        src/database/types/action/action.c
+        src/database/types/query/action/action.h
+        src/database/types/query/action/action.c
         src/utils/writer/file_writer.c
         src/utils/writer/file_writer.h
+        src/database/types/query/query.c
+        src/database/types/query/query.h
+        src/database/types/query/condition/condition.c
+        src/database/types/query/condition/condition.h
 )
