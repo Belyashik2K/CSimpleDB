@@ -32,10 +32,18 @@ int makeInsertQuery(Database *db, Query *query) {
 
 int execute(Database *database, Query *query) {
     if (!database || !query) return 0;
-    if (query->action.value != INSERT) return 0;
 
     if (query->action.value == INSERT) {
         return makeInsertQuery(database, query);
+    }
+    if (query->action.value == DELETE) {
+        return 0;
+    }
+    if (query->action.value == UPDATE) {
+        return 0;
+    }
+    if (query->action.value == SELECT) {
+        return 0;
     }
 
     return 0;
