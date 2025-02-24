@@ -38,13 +38,7 @@ int makeSelectQuery(Database *db, Query *query) {
         if (query->condition_count) {
             int not_satisfy = 0;
             for (int i = 0; i < query->condition_count; i++) {
-                if (!isSatisfiedByCondition(
-                        current->data,
-                        &query->conditions[i]
-                    )
-                ) {
-                    not_satisfy = 1;
-                }
+                if (!isSatisfiedByCondition(current->data, &query->conditions[i])) not_satisfy = 1;
             }
             if (not_satisfy) {
                 current = current->next;

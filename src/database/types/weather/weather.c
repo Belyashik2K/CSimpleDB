@@ -126,8 +126,14 @@ Weather *weatherFactory(const char *weatherString, const char *field) {
 
     char *withoutQuotes = strdup(weatherString);
     if (!withoutQuotes) return NULL;
-    withoutQuotes++;
-    withoutQuotes[strlen(withoutQuotes) - 1] = '\0';
+
+    if (
+        withoutQuotes[0] == '\'' &&
+        withoutQuotes[strlen(withoutQuotes) - 1] == '\''
+    ) {
+        withoutQuotes++;
+        withoutQuotes[strlen(withoutQuotes) - 1] = '\0';
+    }
 
     for (; i < WEATHER_COUNT; i++) {
         if (strcmp(withoutQuotes, weather_strings[i]) == 0 || valid) {
