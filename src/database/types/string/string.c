@@ -124,7 +124,9 @@ CustomString *stringFactory(char *string, const char *field) {
         return NULL;
     }
 
-    strcpy(customString->value, string);
+
+    strcpy(customString->value, string + 1);
+    customString->value[strlen(customString->value) - 1] = '\0';
 
     customString->field = strdup(field);
     if (customString->field == NULL) {
@@ -132,6 +134,7 @@ CustomString *stringFactory(char *string, const char *field) {
         free(customString);
         return NULL;
     }
+
     customString->toString = stringToString;
     customString->compare = compareStrings;
 
