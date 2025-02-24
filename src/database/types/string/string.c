@@ -101,6 +101,14 @@ int compareStrings(const CustomString *self, char *other, ComparisonOptionEnum o
     }
 }
 
+int updateString(CustomString *self, char *newValue) {
+    free(self->value);
+    const CustomString *newString = stringFactory(newValue, self->field);
+    if (!newString) return 0;
+    self->value = newString->value;
+    return 1;
+}
+
 CustomString *stringFactory(char *string, const char *field) {
     if (string[0] != '"' || string[strlen(string) - 1] != '"') {
         return NULL;
@@ -137,6 +145,7 @@ CustomString *stringFactory(char *string, const char *field) {
 
     customString->toString = stringToString;
     customString->compare = compareStrings;
+    customString->update = updateString;
 
     return customString;
 }

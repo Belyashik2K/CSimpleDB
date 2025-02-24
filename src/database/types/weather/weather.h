@@ -16,6 +16,7 @@ typedef struct Weather {
     char *field;
 
     char *(*toString)(struct Weather *self);
+    int (*update)(struct Weather *self, char *newValue);
     int (*compare)(struct Weather *self, char *other, ComparisonOptionEnum option);
 } Weather;
 

@@ -52,12 +52,15 @@ typedef int (*validate_func)(char *);
 
 typedef int (*compare_func)(Record *, char *, ComparisonOptionEnum);
 
+typedef int (*update_func)(Record *, char *);
+
 typedef struct {
     const char *key;
     init_func initialize;
     print_func print;
     validate_func validate;
     compare_func compare;
+    update_func update;
 } KeyMap;
 
 int compareGeoId(Record *record, char *other, ComparisonOptionEnum option) {
@@ -88,14 +91,42 @@ int compareWeather(Record *record, char *other, ComparisonOptionEnum option) {
     return record->weather.compare(&record->weather, other, option);
 }
 
+int updateGeoId(Record *record, char *newValue) {
+    return record->geo_id.update(&record->geo_id, newValue);
+}
+
+int updateGeoPos(Record *record, char *newValue) {
+    return record->geo_pos.update(&record->geo_pos, newValue);
+}
+
+int updateMeaDate(Record *record, char *newValue) {
+    return record->mea_date.update(&record->mea_date, newValue);
+}
+
+int updateLevel(Record *record, char *newValue) {
+    return record->level.update(&record->level, newValue);
+}
+
+int updateSunrise(Record *record, char *newValue) {
+    return record->sunrise.update(&record->sunrise, newValue);
+}
+
+int updateSundown(Record *record, char *newValue) {
+    return record->sundown.update(&record->sundown, newValue);
+}
+
+int updateWeather(Record *record, char *newValue) {
+    return record->weather.update(&record->weather, newValue);
+}
+
 static KeyMap keyMappings[] = {
-    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId},
-    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos},
-    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate},
-    {"level", initializeLevel, printLevel, validateLevel, compareLevel},
-    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise},
-    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown},
-    {"weather", initializeWeather, printWeather, validateWeather, compareWeather}
+    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId, updateGeoId},
+    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos, updateGeoPos},
+    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate, updateMeaDate},
+    {"level", initializeLevel, printLevel, validateLevel, compareLevel, updateLevel},
+    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise, updateSunrise},
+    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown, updateSundown},
+    {"weather", initializeWeather, printWeather, validateWeather, compareWeather, updateWeather}
 };
 
 int printKey(const char *key, Record *record) {
@@ -140,6 +171,15 @@ int isSatisfiedByCondition(Record *record, Condition *condition) {
     for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
         if (strcmp(condition->field, keyMappings[i].key) == 0) {
             return keyMappings[i].compare(record, condition->value, condition->comparison->operator);
+        }
+    }
+    return 0;
+}
+
+int updateRecord(Record *record, QueryField *field) {
+    for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
+        if (strcmp(field->field, keyMappings[i].key) == 0) {
+            return keyMappings[i].update(record, field->value);
         }
     }
     return 0;

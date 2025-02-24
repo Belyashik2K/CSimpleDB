@@ -67,6 +67,28 @@ int makeDeleteQuery(Database *db, Query *query) {
 int makeUpdateQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
 
+    const RecordNode *current = db->head;
+
+    while (current) {
+        if (query->condition_count) {
+            int not_satisfy = 0;
+            for (int i = 0; i < query->condition_count; i++) {
+                if (!isSatisfiedByCondition(current->data, &query->conditions[i])) not_satisfy = 1;
+            }
+            if (not_satisfy) {
+                current = current->next;
+                continue;
+            }
+        }
+
+        for (int i = 0; i < query->field_count; i++) {
+            QueryField field = query->fields[i];
+            updateRecord(current->data, &field);
+        }
+
+        current = current->next;
+    }
+
     return 1;
 }
 
