@@ -2,14 +2,23 @@
 #define COMPARE_H
 
 typedef enum {
+    NOT_IN,
+    IN,
     EQUAL,
     NOT_EQUAL,
-    LESS,
     LESS_OR_EQUAL,
-    GREATER,
     GREATER_OR_EQUAL,
-    IN,
-    NOT_IN
-} ComparisonOption;
+    LESS,
+    GREATER,
+    COMPARE_COUNT
+} ComparisonOptionEnum;
+
+extern const char *comparisonOptionStrings[];
+
+typedef struct {
+    ComparisonOptionEnum operator;
+} Comparison;
+
+Comparison *comparisonFactory(const char *comparisonStr);
 
 #endif

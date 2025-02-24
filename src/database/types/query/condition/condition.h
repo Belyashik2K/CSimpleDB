@@ -1,9 +1,11 @@
 #ifndef CONDITION_H
 #define CONDITION_H
 
+#include "../comparison/comparison.h"
+
 typedef struct {
     char *field;
-    char *operator;
+    Comparison *comparison;
     char *value;
 } Condition;
 

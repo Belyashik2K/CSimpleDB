@@ -33,4 +33,5 @@ add_executable(
         src/database/types/query/query.h
         src/database/types/query/condition/condition.c
         src/database/types/query/condition/condition.h
+        src/database/types/query/comparison/comparison.c
 )
