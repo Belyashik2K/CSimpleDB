@@ -25,5 +25,6 @@ typedef struct RecordNode {
 
 
 Record *recordFactory(Query *query);
+int printKey(const char *key, Record *record);
 
 #endif

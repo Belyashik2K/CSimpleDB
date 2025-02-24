@@ -3,12 +3,50 @@
 #include <string.h>
 
 #include "../record/record.h"
+
+#include <stdio.h>
+
 #include "../query/query.h"
 
 static int initializeGeoId(Record *record, char *value, char *key) {
     CustomInt *geoID = intFactory(value, key);
     if (!geoID) return 0;
     record->geo_id = *geoID;
+    return 1;
+}
+
+static int printGeoId(Record *record) {
+    printf(record->geo_id.toString(&record->geo_id));
+    return 1;
+}
+
+static int printGeoPos(Record *record) {
+    printf(record->geo_pos.toString(&record->geo_pos));
+    return 1;
+}
+
+static int printMeaDate(Record *record) {
+    printf(record->mea_date.toString(&record->mea_date));
+    return 1;
+}
+
+static int printLevel(Record *record) {
+    printf(record->level.toString(&record->level));
+    return 1;
+}
+
+static int printSunrise(Record *record) {
+    printf(record->sunrise.toString(&record->sunrise));
+    return 1;
+}
+
+static int printSundown(Record *record) {
+    printf(record->sundown.toString(&record->sundown));
+    return 1;
+}
+
+static int printWeather(Record *record) {
+    printf(record->weather.toString(&record->weather));
     return 1;
 }
 
@@ -55,21 +93,32 @@ static int initializeWeather(Record *record, char *value, char *key) {
 }
 
 typedef int (*init_func)(Record *, char *, char *);
+typedef int (*print_func)(Record *);
 
 typedef struct {
     const char *key;
     init_func func;
+    print_func print;
 } KeyMap;
 
 static KeyMap keyMappings[] = {
-    {"geo_id", initializeGeoId},
-    {"geo_pos", initializeGeoPos},
-    {"mea_date", initializeMeaDate},
-    {"level", initializeLevel},
-    {"sunrise", initializeSunrise},
-    {"sundown", initializeSundown},
-    {"weather", initializeWeather},
+    {"geo_id", initializeGeoId, printGeoId},
+    {"geo_pos", initializeGeoPos, printGeoPos},
+    {"mea_date", initializeMeaDate, printMeaDate},
+    {"level", initializeLevel, printLevel},
+    {"sunrise", initializeSunrise, printSunrise},
+    {"sundown", initializeSundown, printSundown},
+    {"weather", initializeWeather, printWeather},
 };
+
+int printKey(const char *key, Record *record) {
+    for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
+        if (strcmp(key, keyMappings[i].key) == 0) {
+            return keyMappings[i].print(record);
+        }
+    }
+    return 0;
+}
 
 static int processKey(char *key, char *value, Record *record, int seen[7]) {
     for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {

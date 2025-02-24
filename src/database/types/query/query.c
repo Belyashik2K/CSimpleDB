@@ -105,7 +105,7 @@ Query *queryFactory(char *queryStr) {
     }
 
     Query *query = malloc(sizeof(Query));
-    if (!query) {
+    if (!query || tokenCount == 1) {
         free(tokens);
         free(queryStrCopy);
         return NULL;

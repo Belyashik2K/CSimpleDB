@@ -22,6 +22,13 @@ int parseFile(const char *filename, Database *database) {
         Query *query = queryFactory(line);
         if (query) {
             printf("Query parsed successfully.\n");
+            for (int i = 0; i < query->field_count; i++) {
+                printf("Field: %s, Value: %s\n", query->fields[i].field, query->fields[i].value);
+            }
+            for (int i = 0; i < query->condition_count; i++) {
+                printf("Condition: %s %d %s\n", query->conditions[i].field, query->conditions[i].comparison->operator,
+                       query->conditions[i].value);
+            }
         }
         const int result = database->execute(database, query);
         if (!result) {

@@ -31,7 +31,22 @@ int makeInsertQuery(Database *db, Query *query) {
 }
 
 int makeSelectQuery(Database *db, Query *query) {
-    if (!db || !query) return 0;
+    if (!db || !query || !db->head) return 0;
+
+    const RecordNode *current = db->head;
+    while (current) {
+        if (query->condition_count) {
+            return 0;
+        }
+
+        for (int i = 0; i < query->field_count; i++) {
+            const QueryField field = query->fields[i];
+            printKey(field.field, current->data);
+            printf(" ");
+        }
+        printf("\n");
+        current = current->next;
+    }
 
     return 1;
 }
