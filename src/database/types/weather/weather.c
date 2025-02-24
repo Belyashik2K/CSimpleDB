@@ -60,6 +60,11 @@ int findInList(const Weather *self, char *other) {
             len -= 2;
         }
 
+        if (!weatherFactory(token, self->field)) {
+            free(temp);
+            return -1;
+        }
+
         if (strcmp(token, weather_strings[self->value]) == 0) {
             free(temp);
             return 1;
@@ -74,11 +79,11 @@ int findInList(const Weather *self, char *other) {
 
 int inWeatherList(const Weather *self, char *other) {
     if (!isValueList(other)) return 0;
-    return findInList(self, other);
+    return findInList(self, other) == 1 ? 1 : 0;
 }
 
 int notInWeatherList(const Weather *self, char *other) {
-    return !inWeatherList(self, other);
+    return findInList(self, other) == 0 ? 1 : 0;
 }
 
 int equalWeather(const Weather *self, char *other) {
