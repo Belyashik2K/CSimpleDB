@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../writer/file_writer.h"
 #include "../../database/helper.h"
 #include "../../database/initializer.h"
-#include "../../database/types/query/action/action.h"
 #include "../../database/types/query/query.h"
 
 #define MAX_LINE_LENGTH 1024

@@ -30,6 +30,24 @@ int makeInsertQuery(Database *db, Query *query) {
     return 1;
 }
 
+int makeSelectQuery(Database *db, Query *query) {
+    if (!db || !query) return 0;
+
+    return 1;
+}
+
+int makeDeleteQuery(Database *db, Query *query) {
+    if (!db || !query) return 0;
+
+    return 1;
+}
+
+int makeUpdateQuery(Database *db, Query *query) {
+    if (!db || !query) return 0;
+
+    return 1;
+}
+
 int execute(Database *database, Query *query) {
     if (!database || !query) return 0;
 
@@ -37,13 +55,13 @@ int execute(Database *database, Query *query) {
         return makeInsertQuery(database, query);
     }
     if (query->action.value == DELETE) {
-        return 0;
+        return makeDeleteQuery(database, query);
     }
     if (query->action.value == UPDATE) {
-        return 0;
+        return makeUpdateQuery(database, query);
     }
     if (query->action.value == SELECT) {
-        return 0;
+        return makeSelectQuery(database, query);
     }
 
     return 0;
