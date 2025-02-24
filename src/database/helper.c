@@ -1,14 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "initializer.h"
 #include "types/record/record.h"
 
-void appendRecord(Database *db, Record *record) {
-    if (!db || !record) return;
+int makeInsertQuery(Database *db, Query *query) {
+    if (!db || !query) return 0;
 
     RecordNode *newNode = malloc(sizeof(RecordNode));
-    if (!newNode) return;
+    if (!newNode) return 0;
+
+    Record *record = recordFactory(query);
+    if (!record) {
+        free(newNode);
+        return 0;
+    }
 
     newNode->data = record;
     newNode->next = NULL;
@@ -20,6 +27,18 @@ void appendRecord(Database *db, Record *record) {
     }
     db->tail = newNode;
     db->size++;
+    return 1;
+}
+
+int execute(Database *database, Query *query) {
+    if (!database || !query) return 0;
+    if (query->action.value != INSERT) return 0;
+
+    if (query->action.value == INSERT) {
+        return makeInsertQuery(database, query);
+    }
+
+    return 0;
 }
 
 void printDatabase(Database *db) {

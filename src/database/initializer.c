@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "../database/initializer.h"
+#include "../database/helper.h"
 
 #include <stdio.h>
 
@@ -10,6 +11,7 @@ Database *initializeDatabase() {
     database->head = NULL;
     database->tail = NULL;
     database->size = 0;
+    database->execute = execute;
 
     return database;
 }

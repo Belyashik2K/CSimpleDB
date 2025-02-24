@@ -1,13 +1,9 @@
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "../record/record.h"
-
-static int skipInsert(const char *recordString) {
-    return recordString && strncmp(recordString, "insert ", 7) == 0;
-}
+#include "../query/query.h"
 
 static int initializeGeoId(Record *record, char *value, char *key) {
     CustomInt *geoID = intFactory(value, key);
@@ -86,38 +82,25 @@ static int processKey(char *key, char *value, Record *record, int seen[7]) {
     return 0;
 }
 
-Record *recordFactory(char *recordString) {
-    if (!skipInsert(recordString))
-        return NULL;
-
-    recordString += 7;
-
+Record *recordFactory(Query *query) {
     Record *record = malloc(sizeof(Record));
     if (!record)
         return NULL;
 
-    char *recordCopy = strdup(recordString);
-    if (!recordCopy) return NULL;
-    const char *token = strtok(recordCopy, ",");
-    char token_counter = 0;
     int seen[7] = {0};
-
-    while (token) {
-        char key[20] = {0}, value[50] = {0};
-
-        if (sscanf(token, " %19[^=]=%49[^\n]", key, value) == 2) {
-            if (!processKey(key, value, record, seen)) {
-                free(record);
-                return NULL;
-            }
+    for (int i = 0; i < query->field_count; i++) {
+        const QueryField field = query->fields[i];
+        if (!processKey(field.field, field.value, record, seen)) {
+            free(record);
+            return NULL;
         }
-        token = strtok(NULL, ",");
-        token_counter++;
     }
 
-    if (token_counter != 7) {
-        free(record);
-        return NULL;
+    for (int i = 0; i < 7; i++) {
+        if (!seen[i]) {
+            free(record);
+            return NULL;
+        }
     }
 
     return record;
