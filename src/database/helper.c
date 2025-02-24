@@ -63,8 +63,35 @@ int makeUpdateQuery(Database *db, Query *query) {
     return 1;
 }
 
+int validateFieldsAndConditions(Query *query) {
+    if (!query) return 0;
+
+    for (int i = 0; i < query->field_count; i++) {
+        const QueryField field = query->fields[i];
+
+        if (query->action.value == SELECT) {
+            break;
+        }
+
+        if (!validateValue(field.field, field.value)) {
+            printf("Invalid value for field: %s\n", field.field);
+            return 0;
+        }
+    }
+
+    for (int i = 0; i < query->condition_count; i++) {
+        const Condition condition = query->conditions[i];
+        if (!validateValue(condition.field, condition.value)) {
+            printf("Invalid value for condition: %s\n", condition.field);
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 int execute(Database *database, Query *query) {
-    if (!database || !query) return 0;
+    if (!database || !query || !validateFieldsAndConditions(query)) return 0;
 
     if (query->action.value == INSERT) {
         return makeInsertQuery(database, query);

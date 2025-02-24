@@ -6,14 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* trimWhitespace(char *str) {
-    while (isspace((unsigned char)*str)) str++;
+char *trimWhitespace(char *str) {
+    while (isspace((unsigned char) *str)) str++;
     if (*str == '\0')
         return str;
     char *end = str + strlen(str) - 1;
-    while (end > str && isspace((unsigned char)*end))
+    while (end > str && isspace((unsigned char) *end))
         end--;
-    *(end+1) = '\0';
+    *(end + 1) = '\0';
     return str;
 }
 
@@ -75,6 +75,26 @@ Condition conditionFactory(char *conditionString) {
     return condition;
 }
 
+int validateFields(QueryField *field, Query *query) {
+    if (query->action.value == SELECT && field->value) {
+        return 0;
+    }
+
+    if (query->action.value == INSERT && !field->value) {
+        return 0;
+    }
+
+    if (query->action.value == DELETE && field->field) {
+        return 0;
+    }
+
+    if (query->action.value == UPDATE && !field->value) {
+        return 0;
+    }
+
+    return 1;
+}
+
 
 Query *queryFactory(char *queryStr) {
     char *queryStrCopy = strdup(queryStr);
@@ -110,13 +130,22 @@ Query *queryFactory(char *queryStr) {
         free(queryStrCopy);
         return NULL;
     }
+    query->action = *action;
 
     char *fields = strdup(tokens[1]);
     char *field = strtok_r(fields, ",", &querySavePtr);
     int fieldCount = 0;
     query->fields = malloc(maxTokens * sizeof(QueryField));
     while (field != NULL) {
-        query->fields[fieldCount++] = queryFieldFactory(field);
+        QueryField queryField = queryFieldFactory(field);
+        if (!validateFields(&queryField, query)) {
+            free(tokens);
+            free(queryStrCopy);
+            free(query->fields);
+            free(query);
+            return NULL;
+        }
+        query->fields[fieldCount++] = queryField;
         field = strtok_r(NULL, ",", &querySavePtr);
     }
 
@@ -129,7 +158,6 @@ Query *queryFactory(char *queryStr) {
         }
     }
 
-    query->action = *action;
     query->field_count = fieldCount;
     query->condition_count = conditionCount;
 
