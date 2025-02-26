@@ -70,6 +70,17 @@ char *timeToString(const Time *self) {
     return buffer;
 }
 
+int updateTime(Time *self, char *newValue) {
+    Time *newTime = timeFactory(newValue, self->field);
+    if (!newTime) return 0;
+
+    self->hour = newTime->hour;
+    self->minute = newTime->minute;
+    self->second = newTime->second;
+
+    return 1;
+}
+
 Time *timeFactory(const char *timeString, const char *field) {
     int hour, minute, second;
 
@@ -96,6 +107,7 @@ Time *timeFactory(const char *timeString, const char *field) {
 
     time->toString = timeToString;
     time->compare = compareTimes;
+    time->update = updateTime;
 
     return time;
 }

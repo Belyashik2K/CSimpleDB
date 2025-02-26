@@ -116,6 +116,14 @@ int compareInts(const CustomInt *self, char *other, ComparisonOptionEnum option)
     }
 }
 
+int updateInt(CustomInt *self, char *newValue) {
+    CustomInt *newInt = intFactory(newValue, self->field);
+    if (!newInt) return 0;
+
+    self->value = newInt->value;
+    return 1;
+}
+
 
 CustomInt *intFactory(char *intString, const char *field) {
     int value;
@@ -156,6 +164,7 @@ CustomInt *intFactory(char *intString, const char *field) {
 
     customInt->toString = intToString;
     customInt->compare = compareInts;
+    customInt->update = updateInt;
 
     return customInt;
 }

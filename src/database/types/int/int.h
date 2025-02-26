@@ -8,6 +8,7 @@ typedef struct CustomInt {
     char *field;
 
     char *(*toString)(struct CustomInt *self);
+    int (*update)(struct CustomInt *self, char *newValue);
     int (*compare)(struct CustomInt *self, char *other, ComparisonOptionEnum option);
 } CustomInt;
 

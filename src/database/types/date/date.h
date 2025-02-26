@@ -10,6 +10,7 @@ typedef struct Date {
     char *field;
 
     char *(*toString)(struct Date *self);
+    int (*update)(struct Date *self, char *newValue);
     int (*compare)(struct Date *self, char *other, ComparisonOptionEnum option);
 } Date;
 

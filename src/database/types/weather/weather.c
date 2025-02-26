@@ -114,6 +114,15 @@ int compareWeathers(const Weather *self, char *other, ComparisonOptionEnum optio
     }
 }
 
+int updateWeatherField(Weather *self, char *newValue) {
+    Weather *newWeather = weatherFactory(newValue, self->field);
+    if (!newWeather) return 0;
+
+    self->value = newWeather->value;
+    free(newWeather);
+    return 1;
+}
+
 Weather *weatherFactory(const char *weatherString, const char *field) {
 
     int valid = 0;
@@ -156,6 +165,7 @@ Weather *weatherFactory(const char *weatherString, const char *field) {
 
     weather->toString = weatherToString;
     weather->compare = compareWeathers;
+    weather->update = updateWeatherField;
 
     return weather;
 }

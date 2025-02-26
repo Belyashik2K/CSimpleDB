@@ -10,6 +10,7 @@ typedef struct Time {
     char *field;
 
     char *(*toString)(struct Time *self);
+    int (*update)(struct Time *self, char *newValue);
     int (*compare)(struct Time *self, char *other, ComparisonOptionEnum option);
 } Time;
 

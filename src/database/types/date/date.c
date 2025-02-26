@@ -100,6 +100,17 @@ int compareDates(const Date *self, char *other, ComparisonOptionEnum option) {
     }
 }
 
+int updateDate(Date *self, char *newValue) {
+    Date *newDate = dateFactory(newValue, self->field);
+    if (!newDate) return 0;
+
+    self->day = newDate->day;
+    self->month = newDate->month;
+    self->year = newDate->year;
+
+    return 1;
+}
+
 Date *dateFactory(const char *dateString, const char *field) {
     int day, month, year;
 
@@ -126,6 +137,7 @@ Date *dateFactory(const char *dateString, const char *field) {
 
     date->toString = dateToString;
     date->compare = compareDates;
+    date->update = updateDate;
 
     return date;
 }
