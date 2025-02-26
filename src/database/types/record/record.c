@@ -80,6 +80,16 @@ char *jumpToEqualSign(char *str) {
     // if (str[strlen(str) - 1] == '"' || str[strlen(str) - 1] == '\'') {
     //     str[strlen(str) - 1] = '\0';
     // }
+
+    // убрать экранирование
+    // for (int i = 0; i < strlen(str); i++) {
+    //     if (str[i] == '\\') {
+    //         for (int j = i; j < strlen(str); j++) {
+    //             str[j] = str[j + 1];
+    //         }
+    //     }
+    // }
+
     return str;
 }
 
