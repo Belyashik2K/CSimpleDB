@@ -34,11 +34,11 @@ int parseFile(const char *filename, Database *database) {
         // if (!result) {
         //     printf("Query execution failed.\n");
         // }
-        printf("\n");
+        // printf("\n");
     }
 
-    printf("\nDatabase after parsing:\n");
-    printDatabase(database);
+    // printf("\nDatabase after parsing:\n");
+    // printDatabase(database);
 
     fclose(file);
 

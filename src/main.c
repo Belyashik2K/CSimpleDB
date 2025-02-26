@@ -15,7 +15,7 @@ int main(void) {
     }
     printf("Database initialized, starting to parse the file...\n");
 
-    const int parsed = parseFile("C:/test.txt", database);
+    const int parsed = parseFile("D:/test.txt", database);
     if (!parsed) {
         printf("Parsing failed, maybe the file does not exist?\n");
         freeDatabase(database);

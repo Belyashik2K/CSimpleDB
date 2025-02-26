@@ -54,6 +54,8 @@ typedef int (*compare_func)(Record *, char *, ComparisonOptionEnum);
 
 typedef int (*update_func)(Record *, char *);
 
+typedef char *(*toString_func)(void *);
+
 typedef struct {
     const char *key;
     init_func initialize;
@@ -61,6 +63,7 @@ typedef struct {
     validate_func validate;
     compare_func compare;
     update_func update;
+    toString_func toString;
 } KeyMap;
 
 int compareGeoId(Record *record, char *other, ComparisonOptionEnum option) {
@@ -119,14 +122,42 @@ int updateWeather(Record *record, char *newValue) {
     return record->weather.update(&record->weather, newValue);
 }
 
+char *getGeoIdStringRepresentation(Record *record) {
+    return record->geo_id.toString(&record->geo_id);
+}
+
+char *getGeoPosStringRepresentation(Record *record) {
+    return record->geo_pos.toString(&record->geo_pos);
+}
+
+char *getMeaDateStringRepresentation(Record *record) {
+    return record->mea_date.toString(&record->mea_date);
+}
+
+char *getLevelStringRepresentation(Record *record) {
+    return record->level.toString(&record->level);
+}
+
+char *getSunriseStringRepresentation(Record *record) {
+    return record->sunrise.toString(&record->sunrise);
+}
+
+char *getSundownStringRepresentation(Record *record) {
+    return record->sundown.toString(&record->sundown);
+}
+
+char *getWeatherStringRepresentation(Record *record) {
+    return record->weather.toString(&record->weather);
+}
+
 static KeyMap keyMappings[] = {
-    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId, updateGeoId},
-    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos, updateGeoPos},
-    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate, updateMeaDate},
-    {"level", initializeLevel, printLevel, validateLevel, compareLevel, updateLevel},
-    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise, updateSunrise},
-    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown, updateSundown},
-    {"weather", initializeWeather, printWeather, validateWeather, compareWeather, updateWeather}
+    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId, updateGeoId, getGeoIdStringRepresentation},
+    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos, updateGeoPos, getGeoPosStringRepresentation},
+    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate, updateMeaDate, getMeaDateStringRepresentation},
+    {"level", initializeLevel, printLevel, validateLevel, compareLevel, updateLevel, getLevelStringRepresentation},
+    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise, updateSunrise, getSunriseStringRepresentation},
+    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown, updateSundown, getSundownStringRepresentation},
+    {"weather", initializeWeather, printWeather, validateWeather, compareWeather, updateWeather, getWeatherStringRepresentation}
 };
 
 int printKey(const char *key, Record *record) {
@@ -136,6 +167,15 @@ int printKey(const char *key, Record *record) {
         }
     }
     return 0;
+}
+
+char *getFieldStringRepresentation(const char *key, Record *record) {
+    for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
+        if (strcmp(key, keyMappings[i].key) == 0) {
+            return keyMappings[i].toString(record);
+        }
+    }
+    return NULL;
 }
 
 int validateKey(char *key) {

@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "initializer.h"
 #include "types/record/record.h"
+#include "types/query/action/action.h"
+#include "../utils/writer/file_writer.h"
 
 int makeInsertQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
@@ -27,69 +28,114 @@ int makeInsertQuery(Database *db, Query *query) {
     }
     db->tail = newNode;
     db->size++;
+
+    writeCountOfAffectedRecordsToFile(INSERT, db->size);
+
     return 1;
+}
+
+int checkIfRecordSatisfiesConditions(Record *record, Query *query) {
+    if (!record || !query) return 0;
+
+    for (int i = 0; i < query->condition_count; i++) {
+        if (!isSatisfiedByCondition(record, &query->conditions[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int countAffectedRecords(Database *db, Query *query) {
+    if (!db || !query) return 0;
+
+    const RecordNode *current = db->head;
+
+    int count = 0;
+
+    while (current) {
+        if (checkIfRecordSatisfiesConditions(current->data, query)) {
+            count++;
+        }
+        current = current->next;
+    }
+
+    return count;
 }
 
 int makeSelectQuery(Database *db, Query *query) {
     if (!db || !query || !db->head) return 0;
 
     const RecordNode *current = db->head;
-    while (current) {
-        if (query->condition_count) {
-            int not_satisfy = 0;
-            for (int i = 0; i < query->condition_count; i++) {
-                if (!isSatisfiedByCondition(current->data, &query->conditions[i])) not_satisfy = 1;
-            }
-            if (not_satisfy) {
-                current = current->next;
-                continue;
-            }
-        }
 
-        for (int i = 0; i < query->field_count; i++) {
-            const QueryField field = query->fields[i];
-            printKey(field.field, current->data);
-            printf(" ");
+    const int count = countAffectedRecords(db, query);
+    writeCountOfAffectedRecordsToFile(SELECT, count);
+
+    while (current) {
+        if (checkIfRecordSatisfiesConditions(current->data, query)) {
+            writeSelectResultToFile(current->data, query);
         }
-        printf("\n");
         current = current->next;
     }
-
     return 1;
 }
 
 int makeDeleteQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
 
+    RecordNode *current = db->head;
+    RecordNode *prev = NULL;
+
+    const int count = countAffectedRecords(db, query);
+    writeCountOfAffectedRecordsToFile(DELETE, count);
+
+    while (current) {
+        if (checkIfRecordSatisfiesConditions(current->data, query)) {
+            printf("Record satisfies conditions\n");
+            printf("Deleting record\n");
+            RecordNode *toDelete = current;
+
+            if (prev == NULL) {
+                db->head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            current = current->next;
+
+            free(toDelete->data);
+            free(toDelete);
+            db->size--;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+
     return 1;
 }
+
 
 int makeUpdateQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
 
     const RecordNode *current = db->head;
+    int updatedRecords = 0;
 
     while (current) {
-        if (query->condition_count) {
-            int not_satisfy = 0;
-            for (int i = 0; i < query->condition_count; i++) {
-                if (!isSatisfiedByCondition(current->data, &query->conditions[i])) not_satisfy = 1;
-            }
-            if (not_satisfy) {
-                current = current->next;
-                continue;
-            }
+        if (!checkIfRecordSatisfiesConditions(current->data, query)) {
+            current = current->next;
+            continue;
         }
 
         for (int i = 0; i < query->field_count; i++) {
             QueryField field = query->fields[i];
             updateRecord(current->data, &field);
         }
-
+        updatedRecords++;
         current = current->next;
     }
 
-
+    writeCountOfAffectedRecordsToFile(UPDATE, updatedRecords);
 
     return 1;
 }
