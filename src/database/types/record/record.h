@@ -6,6 +6,7 @@
 #include "../date/date.h"
 #include "../time/time.h"
 #include "../weather/weather.h"
+#include "../query/query.h"
 
 typedef struct {
     CustomInt geo_id;
@@ -23,6 +24,13 @@ typedef struct RecordNode {
 } RecordNode;
 
 
-Record *recordFactory(char *recordString);
+Record *recordFactory(Query *query);
+int printKey(const char *key, Record *record);
+int validateKey(char *key);
+int validateValue(char *key, char *value);
+int isSatisfiedByCondition(Record *record, Condition *condition);
+int updateRecord(Record *record, QueryField *new_data);
+char *getFieldStringRepresentation(const char *field, Record *record);
+int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option, QueryField *field);
 
 #endif

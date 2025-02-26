@@ -1,0 +1,36 @@
+#include "comparison.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+const char *comparisonOptionStrings[] = {
+    "/not_in/",
+    "/in/",
+    "==",
+    "!=",
+    "<=",
+    ">=",
+    "<",
+    ">"
+};
+
+ComparisonOptionEnum comparisonFromString(const char *str) {
+    for (int i = 0; i < COMPARE_COUNT; i++) {
+        if (strcmp(str, comparisonOptionStrings[i]) == 0) {
+            return (ComparisonOptionEnum) i;
+        }
+    }
+    return COMPARE_COUNT;
+}
+
+Comparison *comparisonFactory(const char *comparisonStr) {
+    const ComparisonOptionEnum comparisonEnum = comparisonFromString(comparisonStr);
+    if (comparisonEnum == COMPARE_COUNT) return NULL;
+
+    Comparison *comparison = malloc(sizeof(Comparison));
+    if (!comparison) return NULL;
+
+    comparison->operator = comparisonEnum;
+
+    return comparison;
+}

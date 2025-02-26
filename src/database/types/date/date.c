@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "../date/date.h"
+#include "../query/comparison/comparison.h"
 
 
 int is_leap_year(const int year) {
@@ -43,6 +44,75 @@ char *dateToString(const Date *self) {
     return buffer;
 }
 
+int equalDate(const Date *self, char *other) {
+    Date *otherDate = dateFactory(other, self->field);
+    if (!otherDate) return 0;
+
+    return self->day == otherDate->day && self->month == otherDate->month && self->year == otherDate->year;
+}
+
+int notEqualDate(const Date *self, char *other) {
+    return !equalDate(self, other);
+}
+
+int lessDate(const Date *self, const char *other) {
+    Date *otherDate = dateFactory(other, self->field);
+    if (!otherDate) {
+        return 0;
+    }
+
+    if (self->year < otherDate->year) return 1;
+    if (self->year > otherDate->year) return 0;
+
+    if (self->month < otherDate->month) return 1;
+    if (self->month > otherDate->month) return 0;
+
+    if (self->day < otherDate->day) return 1;
+    return 0;
+}
+
+int greaterDate(const Date *self, char *other) {
+    return !lessDate(self, other) && notEqualDate(self, other);
+}
+
+int lessOrEqualDate(const Date *self, char *other) {
+    return lessDate(self, other) || equalDate(self, other);
+}
+
+int greaterOrEqualDate(const Date *self, char *other) {
+    return greaterDate(self, other) || equalDate(self, other);
+}
+
+int compareDates(const Date *self, char *other, ComparisonOptionEnum option) {
+    switch (option) {
+        case EQUAL:
+            return equalDate(self, other);
+        case NOT_EQUAL:
+            return notEqualDate(self, other);
+        case LESS:
+            return lessDate(self, other);
+        case GREATER:
+            return greaterDate(self, other);
+        case LESS_OR_EQUAL:
+            return lessOrEqualDate(self, other);
+        case GREATER_OR_EQUAL:
+            return greaterOrEqualDate(self, other);
+        default:
+            return 0;
+    }
+}
+
+int updateDate(Date *self, char *newValue) {
+    Date *newDate = dateFactory(newValue, self->field);
+    if (!newDate) return 0;
+
+    self->day = newDate->day;
+    self->month = newDate->month;
+    self->year = newDate->year;
+
+    return 1;
+}
+
 Date *dateFactory(const char *dateString, const char *field) {
     int day, month, year;
 
@@ -68,6 +138,8 @@ Date *dateFactory(const char *dateString, const char *field) {
     }
 
     date->toString = dateToString;
+    date->compare = compareDates;
+    date->update = updateDate;
 
     return date;
 }
