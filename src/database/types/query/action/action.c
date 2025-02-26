@@ -8,7 +8,8 @@ const char *actionStrings[] = {
     "delete",
     "update",
     "select",
-    "uniq"
+    "uniq",
+    "sort"
 };
 
 ActionEnum actionFromString(const char *str) {

@@ -17,7 +17,9 @@ int notEqualTime(const Time *self, char *other) {
 
 int lessTime(const Time *self, char *other) {
     Time *otherTime = timeFactory(other, self->field);
-    if (!otherTime) return 0;
+    if (!otherTime) {
+        return 0;
+    }
 
     if (self->hour < otherTime->hour) return 1;
     if (self->hour > otherTime->hour) return 0;

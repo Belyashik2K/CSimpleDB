@@ -56,6 +56,8 @@ typedef int (*update_func)(Record *, char *);
 
 typedef char *(*toString_func)(void *);
 
+typedef int (*compareTwo_func)(Record *, Record *, ComparisonOptionEnum);
+
 typedef struct {
     const char *key;
     init_func initialize;
@@ -64,7 +66,22 @@ typedef struct {
     compare_func compare;
     update_func update;
     toString_func toString;
+    compareTwo_func compareTwo;
 } KeyMap;
+
+char *jumpToEqualSign(char *str) {
+    while (*str != '=' && *str != '\0') {
+        str++;
+    }
+    str++;
+    // if (*str == '"' || *str == '\'') {
+    //     str++;
+    // }
+    // if (str[strlen(str) - 1] == '"' || str[strlen(str) - 1] == '\'') {
+    //     str[strlen(str) - 1] = '\0';
+    // }
+    return str;
+}
 
 int compareGeoId(Record *record, char *other, ComparisonOptionEnum option) {
     return record->geo_id.compare(&record->geo_id, other, option);
@@ -150,14 +167,42 @@ char *getWeatherStringRepresentation(Record *record) {
     return record->weather.toString(&record->weather);
 }
 
+int compareTwoGeoId(Record *record, Record *other, ComparisonOptionEnum option) {
+    return record->geo_id.compare(&record->geo_id, jumpToEqualSign(getGeoIdStringRepresentation(other)), option);
+}
+
+int compareTwoGeoPos(Record *record, Record *other, ComparisonOptionEnum option) {
+    return record->geo_pos.compare(&record->geo_pos, jumpToEqualSign(getGeoPosStringRepresentation(other)), option);
+}
+
+int compareTwoMeaDate(Record *record, Record *other, ComparisonOptionEnum option) {
+    return record->mea_date.compare(&record->mea_date, jumpToEqualSign(getMeaDateStringRepresentation(other)), option);
+}
+
+int compareTwoLevel(Record *record, Record *other, ComparisonOptionEnum option) {
+    return record->level.compare(&record->level, jumpToEqualSign(getLevelStringRepresentation(other)), option);
+}
+
+int compareTwoSunrise(Record *record, Record *other, ComparisonOptionEnum option) {
+    return record->sunrise.compare(&record->sunrise, jumpToEqualSign(getSunriseStringRepresentation(other)), option);
+}
+
+int compareTwoSundown(Record *record, Record *other, ComparisonOptionEnum option) {
+    return record->sundown.compare(&record->sundown, jumpToEqualSign(getSundownStringRepresentation(other)), option);
+}
+
+int compareTwoWeather(Record *record, Record *other, ComparisonOptionEnum option) {
+    return record->weather.compare(&record->weather, jumpToEqualSign(getWeatherStringRepresentation(other)), option);
+}
+
 static KeyMap keyMappings[] = {
-    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId, updateGeoId, getGeoIdStringRepresentation},
-    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos, updateGeoPos, getGeoPosStringRepresentation},
-    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate, updateMeaDate, getMeaDateStringRepresentation},
-    {"level", initializeLevel, printLevel, validateLevel, compareLevel, updateLevel, getLevelStringRepresentation},
-    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise, updateSunrise, getSunriseStringRepresentation},
-    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown, updateSundown, getSundownStringRepresentation},
-    {"weather", initializeWeather, printWeather, validateWeather, compareWeather, updateWeather, getWeatherStringRepresentation}
+    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId, updateGeoId, getGeoIdStringRepresentation, compareTwoGeoId},
+    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos, updateGeoPos, getGeoPosStringRepresentation, compareTwoGeoPos},
+    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate, updateMeaDate, getMeaDateStringRepresentation, compareTwoMeaDate},
+    {"level", initializeLevel, printLevel, validateLevel, compareLevel, updateLevel, getLevelStringRepresentation, compareTwoLevel},
+    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise, updateSunrise, getSunriseStringRepresentation, compareTwoSunrise},
+    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown, updateSundown, getSundownStringRepresentation, compareTwoSundown},
+    {"weather", initializeWeather, printWeather, validateWeather, compareWeather, updateWeather, getWeatherStringRepresentation, compareTwoWeather}
 };
 
 int printKey(const char *key, Record *record) {
@@ -220,6 +265,15 @@ int updateRecord(Record *record, QueryField *field) {
     for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
         if (strcmp(field->field, keyMappings[i].key) == 0) {
             return keyMappings[i].update(record, field->value);
+        }
+    }
+    return 0;
+}
+
+int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option, QueryField *field) {
+    for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
+        if (strcmp(field->field, keyMappings[i].key) == 0) {
+            return keyMappings[i].compareTwo(record, other, option);
         }
     }
     return 0;

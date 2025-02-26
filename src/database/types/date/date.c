@@ -57,7 +57,9 @@ int notEqualDate(const Date *self, char *other) {
 
 int lessDate(const Date *self, const char *other) {
     Date *otherDate = dateFactory(other, self->field);
-    if (!otherDate) return 0;
+    if (!otherDate) {
+        return 0;
+    }
 
     if (self->year < otherDate->year) return 1;
     if (self->year > otherDate->year) return 0;

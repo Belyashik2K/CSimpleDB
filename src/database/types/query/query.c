@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include "query.h"
+#include "order/sort.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -57,57 +58,57 @@ char *trimWhitespace(char *str) {
 }
 
 QueryField queryFieldFactory(char *fieldString) {
-        QueryField queryField = {NULL, NULL};
-        int inQuotes = 0;
-        char quoteChar = 0;
+    QueryField queryField = {NULL, NULL};
+    int inQuotes = 0;
+    char quoteChar = 0;
 
-        char *pos = fieldString;
-        char *equalSign = NULL;
+    char *pos = fieldString;
+    char *equalSign = NULL;
 
-        while (*pos) {
-            if (*pos == '"' || *pos == '\'') {
-                if (!checkForScreeningInQuery(pos, pos - fieldString)) {
-                    if (!inQuotes) {
-                        inQuotes = 1;
-                        quoteChar = *pos;
-                    } else if (*pos == quoteChar) {
-                        inQuotes = 0;
-                    }
+    while (*pos) {
+        if (*pos == '"' || *pos == '\'') {
+            if (!checkForScreeningInQuery(pos, pos - fieldString)) {
+                if (!inQuotes) {
+                    inQuotes = 1;
+                    quoteChar = *pos;
+                } else if (*pos == quoteChar) {
+                    inQuotes = 0;
                 }
-            } else if (*pos == '=' && !inQuotes && !equalSign) {
-                equalSign = pos;
             }
-            pos++;
+        } else if (*pos == '=' && !inQuotes && !equalSign) {
+            equalSign = pos;
         }
+        pos++;
+    }
 
-        if (!equalSign) {
-            queryField.field = strdup(trimWhitespace(fieldString));
-            return queryField;
-        }
-
-        int fieldLen = equalSign - fieldString;
-        char *fieldPart = malloc(fieldLen + 1);
-        if (!fieldPart) {
-            return queryField;
-        }
-        strncpy(fieldPart, fieldString, fieldLen);
-        fieldPart[fieldLen] = '\0';
-
-        int valueLen = strlen(equalSign + 1);
-        char *valuePart = malloc(valueLen + 1);
-        if (!valuePart) {
-            free(fieldPart);
-            return queryField;
-        }
-        strcpy(valuePart, equalSign + 1);
-
-        queryField.field = strdup(trimWhitespace(fieldPart));
-        queryField.value = strdup(trimWhitespace(valuePart));
-
-        free(fieldPart);
-        free(valuePart);
+    if (!equalSign) {
+        queryField.field = strdup(trimWhitespace(fieldString));
         return queryField;
     }
+
+    int fieldLen = equalSign - fieldString;
+    char *fieldPart = malloc(fieldLen + 1);
+    if (!fieldPart) {
+        return queryField;
+    }
+    strncpy(fieldPart, fieldString, fieldLen);
+    fieldPart[fieldLen] = '\0';
+
+    int valueLen = strlen(equalSign + 1);
+    char *valuePart = malloc(valueLen + 1);
+    if (!valuePart) {
+        free(fieldPart);
+        return queryField;
+    }
+    strcpy(valuePart, equalSign + 1);
+
+    queryField.field = strdup(trimWhitespace(fieldPart));
+    queryField.value = strdup(trimWhitespace(valuePart));
+
+    free(fieldPart);
+    free(valuePart);
+    return queryField;
+}
 
 Condition conditionFactory(char *conditionString) {
     Condition condition;
@@ -205,6 +206,13 @@ QueryField *findFields(char **line, Query *query) {
             fields = realloc(fields, sizeof(QueryField) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
 
+            if (query->action.value == SORT) {
+                if (!sortFactory(fields[fieldCount - 1].value)) {
+                    free(fields);
+                    return NULL;
+                }
+            }
+
             free(field);
             startPtr = *line + i + 1;
         }
@@ -218,6 +226,13 @@ QueryField *findFields(char **line, Query *query) {
             const QueryField fieldObj = queryFieldFactory(prepareString(field));
             fields = realloc(fields, sizeof(QueryField) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
+
+            if (query->action.value == SORT) {
+                if (!sortFactory(fields[fieldCount - 1].value)) {
+                    free(fields);
+                    return NULL;
+                }
+            }
 
             lastIndexOfField = i;
             free(field);

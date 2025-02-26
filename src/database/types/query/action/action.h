@@ -7,6 +7,7 @@ typedef enum {
     UPDATE,
     SELECT,
     UNIQUE,
+    SORT,
     ACTION_COUNT
 } ActionEnum;
 

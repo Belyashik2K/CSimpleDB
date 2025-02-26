@@ -31,5 +31,6 @@ int validateValue(char *key, char *value);
 int isSatisfiedByCondition(Record *record, Condition *condition);
 int updateRecord(Record *record, QueryField *new_data);
 char *getFieldStringRepresentation(const char *field, Record *record);
+int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option, QueryField *field);
 
 #endif

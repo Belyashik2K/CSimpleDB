@@ -66,7 +66,9 @@ int lessString(const CustomString *self, char *other) {
 
 int greaterString(const CustomString *self, char *other) {
     CustomString *otherString = stringFactory(other, self->field);
-    if (!otherString) return 0;
+    if (!otherString) {
+        return 0;
+    }
 
     int result = strcmp(self->value, otherString->value) > 0;
     free(otherString);

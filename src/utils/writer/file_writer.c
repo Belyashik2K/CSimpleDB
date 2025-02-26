@@ -69,6 +69,9 @@ void writeCountOfAffectedRecordsToFile(const ActionEnum action, const int count)
         case UNIQUE:
             fprintf(file, "uniq:%d\n", count);
             break;
+        case SORT:
+            fprintf(file, "sort:%d\n", count);
+            break;
         default:
             break;
     }
