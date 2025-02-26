@@ -91,8 +91,6 @@ int makeDeleteQuery(Database *db, Query *query) {
 
     while (current) {
         if (checkIfRecordSatisfiesConditions(current->data, query)) {
-            printf("Record satisfies conditions\n");
-            printf("Deleting record\n");
             RecordNode *toDelete = current;
 
             if (prev == NULL) {
@@ -151,13 +149,11 @@ int validateFieldsAndConditions(Query *query) {
             return 0;
         }
 
-        if (query->action.value == SELECT) {
-            break;
-        }
-
-        if (!validateValue(field.field, field.value)) {
-            printf("Invalid value for field: %s\n", field.field);
-            return 0;
+        if (query->action.value != SELECT) {
+            if (!validateValue(field.field, field.value)) {
+                printf("Invalid value for field: %s\n", field.field);
+                return 0;
+            }
         }
     }
 

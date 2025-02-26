@@ -16,9 +16,11 @@ void prepareOutputFile() {
 }
 
 char *prepareSelectResult(Record *record, Query *query) {
-    char *result = calloc(1, sizeof(char));  // Initialize with zero
-    if (!result) return NULL;
-
+    char *result = calloc(1, sizeof(char));
+    if (!result) {
+        printf("Could not allocate memory\n");
+        return NULL;
+    }
     for (int i = 0; i < query->field_count; i++) {
         const QueryField field = query->fields[i];
         char *fieldString = getFieldStringRepresentation(field.field, record);
@@ -30,6 +32,7 @@ char *prepareSelectResult(Record *record, Query *query) {
 
         char *new_result = realloc(result, strlen(result) + strlen(fieldString) + 2);
         if (!new_result) {
+            printf("Could not reallocate memory\n");
             free(result);
             free(fieldString);
             return NULL;

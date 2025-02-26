@@ -4,7 +4,46 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <string.h>
+
+int checkForScreeningInQuery(const char *line, const int index) {
+    return index > 0 && line[index - 1] == '\\' && line[index - 2] != '\\';
+}
+
+void checkBrackets(const char *line, const int index, int *inBrackets, char *lastSeenBracketCode) {
+    if (line[index] == '[' || line[index] == ']') {
+        if (*inBrackets == 0) {
+            *inBrackets = 1;
+            *lastSeenBracketCode = line[index];
+        } else if (*lastSeenBracketCode != line[index]) {
+            *inBrackets = 0;
+            *lastSeenBracketCode = 0;
+        }
+    }
+}
+
+void checkQuotes(const char *line, const int index, int *inQuotes, char *lastSeenQuoteCode) {
+    if (line[index] == '"' || line[index] == '\'') {
+        if (checkForScreeningInQuery(line, index)) {
+            return;
+        }
+
+        if (*inQuotes == 0) {
+            *inQuotes = 1;
+            *lastSeenQuoteCode = line[index];
+        } else if (*lastSeenQuoteCode == line[index]) {
+            *inQuotes = 0;
+            *lastSeenQuoteCode = 0;
+        }
+    }
+}
+
+char *prepareString(char *str) {
+    str[strcspn(str, "\n")] = 0;
+    str = trimWhitespace(str);
+    return str;
+}
 
 char *trimWhitespace(char *str) {
     while (isspace((unsigned char) *str)) str++;
@@ -18,16 +57,57 @@ char *trimWhitespace(char *str) {
 }
 
 QueryField queryFieldFactory(char *fieldString) {
-    char *queryFieldPtr = NULL;
-    const char *field = strtok_r(fieldString, "=", &queryFieldPtr);
-    const char *value = strtok_r(NULL, "=", &queryFieldPtr);
+        QueryField queryField = {NULL, NULL};
+        int inQuotes = 0;
+        char quoteChar = 0;
 
-    QueryField queryField;
-    queryField.field = strdup(field);
-    queryField.value = strdup(value);
+        char *pos = fieldString;
+        char *equalSign = NULL;
 
-    return queryField;
-}
+        while (*pos) {
+            if (*pos == '"' || *pos == '\'') {
+                if (!checkForScreeningInQuery(pos, pos - fieldString)) {
+                    if (!inQuotes) {
+                        inQuotes = 1;
+                        quoteChar = *pos;
+                    } else if (*pos == quoteChar) {
+                        inQuotes = 0;
+                    }
+                }
+            } else if (*pos == '=' && !inQuotes && !equalSign) {
+                equalSign = pos;
+            }
+            pos++;
+        }
+
+        if (!equalSign) {
+            queryField.field = strdup(trimWhitespace(fieldString));
+            return queryField;
+        }
+
+        int fieldLen = equalSign - fieldString;
+        char *fieldPart = malloc(fieldLen + 1);
+        if (!fieldPart) {
+            return queryField;
+        }
+        strncpy(fieldPart, fieldString, fieldLen);
+        fieldPart[fieldLen] = '\0';
+
+        int valueLen = strlen(equalSign + 1);
+        char *valuePart = malloc(valueLen + 1);
+        if (!valuePart) {
+            free(fieldPart);
+            return queryField;
+        }
+        strcpy(valuePart, equalSign + 1);
+
+        queryField.field = strdup(trimWhitespace(fieldPart));
+        queryField.value = strdup(trimWhitespace(valuePart));
+
+        free(fieldPart);
+        free(valuePart);
+        return queryField;
+    }
 
 Condition conditionFactory(char *conditionString) {
     Condition condition;
@@ -99,44 +179,6 @@ char *findAction(char **line) {
     strncpy(action, *line - endIndex, endIndex);
     action[endIndex] = '\0';
     return action;
-}
-
-int checkForScreeningInQuery(const char *line, const int index) {
-    return index > 0 && line[index - 1] == '\\' && line[index - 2] != '\\';
-}
-
-void checkBrackets(const char *line, const int index, int *inBrackets, char *lastSeenBracketCode) {
-    if (line[index] == '[' || line[index] == ']') {
-        if (*inBrackets == 0) {
-            *inBrackets = 1;
-            *lastSeenBracketCode = line[index];
-        } else if (*lastSeenBracketCode != line[index]) {
-            *inBrackets = 0;
-            *lastSeenBracketCode = 0;
-        }
-    }
-}
-
-void checkQuotes(const char *line, const int index, int *inQuotes, char *lastSeenQuoteCode) {
-    if (line[index] == '"' || line[index] == '\'') {
-        if (checkForScreeningInQuery(line, index)) {
-            return;
-        }
-
-        if (*inQuotes == 0) {
-            *inQuotes = 1;
-            *lastSeenQuoteCode = line[index];
-        } else if (*lastSeenQuoteCode == line[index]) {
-            *inQuotes = 0;
-            *lastSeenQuoteCode = 0;
-        }
-    }
-}
-
-char *prepareString(char *str) {
-    str[strcspn(str, "\n")] = 0;
-    str = trimWhitespace(str);
-    return str;
 }
 
 QueryField *findFields(char **line, Query *query) {
