@@ -310,7 +310,7 @@ Query *queryFactory(char *queryStr) {
     const Action *action = actionFactory(actionStr);
     if (!action) {
         free(actionStr);
-        free(queryStrCopy);
+        // free(queryStrCopy);
         return NULL;
     }
 
