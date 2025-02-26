@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "initializer.h"
 #include "types/record/record.h"
@@ -138,6 +139,66 @@ int makeUpdateQuery(Database *db, Query *query) {
     return 1;
 }
 
+int makeUniqQuery(Database *db, Query *query) {
+    if (!db || !query || query->field_count == 0) return 0;
+
+    RecordNode *current = db->head;
+    RecordNode *prev = NULL;
+    int deletedCount = 0;
+
+    while (current) {
+        RecordNode *runner = current->next;
+        int isDuplicate = 0;
+
+        while (runner) {
+            int fieldsMatch = 1;
+
+            for (int i = 0; i < query->field_count; i++) {
+                const QueryField field = query->fields[i];
+                const char *currentValue = getFieldStringRepresentation(field.field, current->data);
+                const char *runnerValue = getFieldStringRepresentation(field.field, runner->data);
+
+                if (strcmp(currentValue, runnerValue) != 0) {
+                    fieldsMatch = 0;
+                    break;
+                }
+            }
+
+            if (fieldsMatch) {
+                isDuplicate = 1;
+                break;
+            }
+            runner = runner->next;
+        }
+
+        RecordNode *nextNode = current->next;
+
+        if (isDuplicate) {
+            if (prev) {
+                prev->next = nextNode;
+            } else {
+                db->head = nextNode;
+            }
+
+            if (current == db->tail) {
+                db->tail = prev;
+            }
+
+            free(current->data);
+            free(current);
+            db->size--;
+            deletedCount++;
+            current = nextNode;
+        } else {
+            prev = current;
+            current = nextNode;
+        }
+    }
+
+    writeCountOfAffectedRecordsToFile(UNIQUE, deletedCount);
+    return 1;
+}
+
 int validateFieldsAndConditions(Query *query) {
     if (!query) return 0;
 
@@ -149,7 +210,7 @@ int validateFieldsAndConditions(Query *query) {
             return 0;
         }
 
-        if (query->action.value != SELECT) {
+        if (query->action.value != SELECT && query->action.value != UNIQUE) {
             if (!validateValue(field.field, field.value)) {
                 printf("Invalid value for field: %s\n", field.field);
                 return 0;
@@ -188,6 +249,9 @@ int execute(Database *database, Query *query) {
     }
     if (query->action.value == SELECT) {
         return makeSelectQuery(database, query);
+    }
+    if (query->action.value == UNIQUE) {
+        return makeUniqQuery(database, query);
     }
 
     return 0;

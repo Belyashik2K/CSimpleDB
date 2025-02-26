@@ -66,6 +66,9 @@ void writeCountOfAffectedRecordsToFile(const ActionEnum action, const int count)
         case SELECT:
             fprintf(file, "select:%d\n", count);
             break;
+        case UNIQUE:
+            fprintf(file, "uniq:%d\n", count);
+            break;
         default:
             break;
     }

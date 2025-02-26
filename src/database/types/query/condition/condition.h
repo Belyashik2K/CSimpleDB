@@ -9,4 +9,6 @@ typedef struct {
     char *value;
 } Condition;
 
+Condition conditionFactory(char *conditionString);
+
 #endif
