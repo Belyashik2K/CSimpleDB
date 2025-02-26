@@ -67,6 +67,8 @@ int makeDeleteQuery(Database *db, Query *query) {
 int makeUpdateQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
 
+
+
     return 1;
 }
 
