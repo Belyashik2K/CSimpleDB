@@ -199,16 +199,16 @@ int makeUniqQuery(Database *db, Query *query) {
     return 1;
 }
 
-RecordNode* merge(RecordNode* left, RecordNode* right, Query* query) {
+RecordNode *merge(RecordNode *left, RecordNode *right, Query *query) {
     RecordNode dummy = {0};
-    RecordNode* tail = &dummy;
+    RecordNode *tail = &dummy;
 
     while (left && right) {
         int compareResult = 0;
 
         for (int i = 0; i < query->field_count && compareResult == 0; i++) {
             QueryField field = query->fields[i];
-            ComparisonOptionEnum option = strcmp(query->fields[i].value, "asc") == 0 ?  GREATER : LESS;
+            ComparisonOptionEnum option = strcmp(query->fields[i].value, "asc") == 0 ? GREATER : LESS;
             compareResult = compareTwoRecords(left->data, right->data, option, &field);
         }
 
@@ -228,7 +228,7 @@ RecordNode* merge(RecordNode* left, RecordNode* right, Query* query) {
     return dummy.next;
 }
 
-void splitList(RecordNode* head, RecordNode** left, RecordNode** right) {
+void splitList(RecordNode *head, RecordNode **left, RecordNode **right) {
     if (!head || !head->next) {
         *left = head;
         *right = NULL;
@@ -246,7 +246,7 @@ void splitList(RecordNode* head, RecordNode** left, RecordNode** right) {
     slow->next = NULL;
 }
 
-RecordNode* mergeSort(RecordNode* head, Query* query) {
+RecordNode *mergeSort(RecordNode *head, Query *query) {
     if (!head || !head->next) return head;
 
     RecordNode *left, *right;
@@ -258,38 +258,12 @@ RecordNode* mergeSort(RecordNode* head, Query* query) {
     return merge(left, right, query);
 }
 
-// int checkDuplicateFields(Query* query) {
-//     for (int i = 0; i < query->field_count; i++) {
-//         for (int j = i + 1; j < query->field_count; j++) {
-//             if (strcmp(query->fields[i].field, query->fields[j].field) == 0) {
-//                 return 1;
-//             }
-//         }
-//     }
-//     return 0;
-// }
-
 int makeSortQuery(Database *db, Query *query) {
     if (!db || !query || query->field_count == 0) return 0;
 
-    // Check for duplicate fields
-    // if (checkDuplicateFields(query)) return 0;
-
-    // Validate field types and sort orders
-    // for (int i = 0; i < query->field_count; i++) {
-    //     const QueryField field = query->fields[i];
-    //
-    //     // Check for enum or set fields
-    //     // if (isEnumOrSetField(field.field)) return 0;
-    //
-    //     // Validate sort order
-    //     // if (!field.value || (strcmp(field.value, "asc") != 0 &&
-    //     //     strcmp(field.value, "desc") != 0)) return 0;
-    // }
-
     db->head = mergeSort(db->head, query);
 
-    RecordNode* current = db->head;
+    RecordNode *current = db->head;
     while (current && current->next) {
         current = current->next;
     }
