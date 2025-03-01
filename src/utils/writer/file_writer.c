@@ -84,17 +84,18 @@ void writeSelectResultToFile(Record *record, Query *query) {
     FILE *file = fopen(OUTPUT_FILE, "a");
     if (!file) {
         printf("Could not open file for writing\n");
+        return;
     }
 
     char *result = prepareSelectResult(record, query);
     if (!result) {
         printf("Could not prepare select result\n");
+        fclose(file);
         return;
     }
 
     fprintf(file, "%s\n", result);
     free(result);
-
     fclose(file);
 }
 
