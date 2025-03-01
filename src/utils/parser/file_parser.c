@@ -5,7 +5,7 @@
 #include "../../database/initializer.h"
 #include "../../database/types/query/query.h"
 
-#define MAX_LINE_LENGTH 1024
+#define MAX_LINE_LENGTH 65536
 
 int parseFile(const char *filename, Database *database) {
     FILE *file = fopen(filename, "r");

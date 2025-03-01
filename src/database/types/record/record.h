@@ -9,13 +9,13 @@
 #include "../query/query.h"
 
 typedef struct {
-    CustomInt geo_id;
-    CustomString geo_pos;
-    Date mea_date;
-    CustomInt level;
-    Time sunrise;
-    Weather weather;
-    Time sundown;
+    CustomInt *geo_id;
+    CustomString *geo_pos;
+    Date *mea_date;
+    CustomInt *level;
+    Time *sunrise;
+    Weather *weather;
+    Time *sundown;
 } Record;
 
 typedef struct RecordNode {

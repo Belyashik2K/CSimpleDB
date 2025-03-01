@@ -6,43 +6,117 @@
 #include "../record/record.h"
 #include "../query/query.h"
 
-#define DEFINE_INIT_FUNC(NAME, FIELD, TYPE, FACTORY)                      \
-    static int initialize##NAME(Record *record, char *value, char *key) {   \
-        TYPE *tmp = FACTORY(value, key);                                  \
-        if (!tmp) return 0;                                               \
-        record->FIELD = *tmp;                                             \
-        return 1;                                                         \
-    }
+static int initializeGeoId(Record *record, char *value, char *key) {
+    CustomInt *tmp = intFactory(value, key);
+    if (!tmp) return 0;
+    record->geo_id = tmp;
+    return 1;
+}
 
-#define DEFINE_PRINT_FUNC(NAME, FIELD)                                    \
-    static int print##NAME(Record *record) {                              \
-        printf("%s", record->FIELD.toString(&record->FIELD));             \
-        return 1;                                                         \
-    }
+static int initializeGeoPos(Record *record, char *value, char *key) {
+    CustomString *tmp = stringFactory(value, key);
+    if (!tmp) return 0;
+    record->geo_pos = tmp;
+    return 1;
+}
 
-#define DEFINE_VALIDATE_FUNC(NAME, KEY_STR, FACTORY)                      \
-    int validate##NAME(char *value) {                                     \
-        return FACTORY(value, KEY_STR) != NULL;                           \
-    }
+static int initializeMeaDate(Record *record, char *value, char *key) {
+    Date *tmp = dateFactory(value, key);
+    if (!tmp) return 0;
+    record->mea_date = tmp;
+    return 1;
+}
 
-#define DEFINE_ALL_FUNCS(NAME, KEY_STR, FIELD, TYPE, FACTORY) \
-    DEFINE_INIT_FUNC(NAME, FIELD, TYPE, FACTORY)              \
-    DEFINE_PRINT_FUNC(NAME, FIELD)                            \
-    DEFINE_VALIDATE_FUNC(NAME, KEY_STR, FACTORY) \
+static int initializeLevel(Record *record, char *value, char *key) {
+    CustomInt *tmp = intFactory(value, key);
+    if (!tmp) return 0;
+    record->level = tmp;
+    return 1;
+}
 
-DEFINE_ALL_FUNCS(GeoId, "geo_id", geo_id, CustomInt, intFactory)
+static int initializeSunrise(Record *record, char *value, char *key) {
+    Time *tmp = timeFactory(value, key);
+    if (!tmp) return 0;
+    record->sunrise = tmp;
+    return 1;
+}
 
-DEFINE_ALL_FUNCS(GeoPos, "geo_pos", geo_pos, CustomString, stringFactory)
+static int initializeSundown(Record *record, char *value, char *key) {
+    Time *tmp = timeFactory(value, key);
+    if (!tmp) return 0;
+    record->sundown = tmp;
+    return 1;
+}
 
-DEFINE_ALL_FUNCS(MeaDate, "mea_date", mea_date, Date, dateFactory)
+static int initializeWeather(Record *record, char *value, char *key) {
+    Weather *tmp = weatherFactory(value, key);
+    if (!tmp) return 0;
+    record->weather = tmp;
+    return 1;
+}
 
-DEFINE_ALL_FUNCS(Level, "level", level, CustomInt, intFactory)
+static int printGeoId(Record *record) {
+    printf("%s", record->geo_id->toString(record->geo_id));
+    return 1;
+}
 
-DEFINE_ALL_FUNCS(Sunrise, "sunrise", sunrise, Time, timeFactory)
+static int printGeoPos(Record *record) {
+    printf("%s", record->geo_pos->toString(record->geo_pos));
+    return 1;
+}
 
-DEFINE_ALL_FUNCS(Sundown, "sundown", sundown, Time, timeFactory)
+static int printMeaDate(Record *record) {
+    printf("%s", record->mea_date->toString(record->mea_date));
+    return 1;
+}
 
-DEFINE_ALL_FUNCS(Weather, "weather", weather, Weather, weatherFactory)
+static int printLevel(Record *record) {
+    printf("%s", record->level->toString(record->level));
+    return 1;
+}
+
+static int printSunrise(Record *record) {
+    printf("%s", record->sunrise->toString(record->sunrise));
+    return 1;
+}
+
+static int printSundown(Record *record) {
+    printf("%s", record->sundown->toString(record->sundown));
+    return 1;
+}
+
+static int printWeather(Record *record) {
+    printf("%s", record->weather->toString(record->weather));
+    return 1;
+}
+
+int validateGeoId(char *value) {
+    return intFactory(value, "geo_id") != NULL;
+}
+
+int validateGeoPos(char *value) {
+    return stringFactory(value, "geo_pos") != NULL;
+}
+
+int validateMeaDate(char *value) {
+    return dateFactory(value, "mea_date") != NULL;
+}
+
+int validateLevel(char *value) {
+    return intFactory(value, "level") != NULL;
+}
+
+int validateSunrise(char *value) {
+    return timeFactory(value, "sunrise") != NULL;
+}
+
+int validateSundown(char *value) {
+    return timeFactory(value, "sundown") != NULL;
+}
+
+int validateWeather(char *value) {
+    return weatherFactory(value, "weather") != NULL;
+}
 
 typedef int (*init_func)(Record *, char *, char *);
 
@@ -74,145 +148,150 @@ char *jumpToEqualSign(char *str) {
         str++;
     }
     str++;
-    // if (*str == '"' || *str == '\'') {
-    //     str++;
-    // }
-    // if (str[strlen(str) - 1] == '"' || str[strlen(str) - 1] == '\'') {
-    //     str[strlen(str) - 1] = '\0';
-    // }
-
-    // убрать экранирование
-    // for (int i = 0; i < strlen(str); i++) {
-    //     if (str[i] == '\\') {
-    //         for (int j = i; j < strlen(str); j++) {
-    //             str[j] = str[j + 1];
-    //         }
-    //     }
-    // }
-
     return str;
 }
 
 int compareGeoId(Record *record, char *other, ComparisonOptionEnum option) {
-    return record->geo_id.compare(&record->geo_id, other, option);
+    return record->geo_id->compare(record->geo_id, other, option);
 }
 
 int compareGeoPos(Record *record, char *other, ComparisonOptionEnum option) {
-    return record->geo_pos.compare(&record->geo_pos, other, option);
+    return record->geo_pos->compare(record->geo_pos, other, option);
 }
 
 int compareMeaDate(Record *record, char *other, ComparisonOptionEnum option) {
-    return record->mea_date.compare(&record->mea_date, other, option);
+    return record->mea_date->compare(record->mea_date, other, option);
 }
 
 int compareLevel(Record *record, char *other, ComparisonOptionEnum option) {
-    return record->level.compare(&record->level, other, option);
+    return record->level->compare(record->level, other, option);
 }
 
 int compareSunrise(Record *record, char *other, ComparisonOptionEnum option) {
-    return record->sunrise.compare(&record->sunrise, other, option);
+    return record->sunrise->compare(record->sunrise, other, option);
 }
 
 int compareSundown(Record *record, char *other, ComparisonOptionEnum option) {
-    return record->sundown.compare(&record->sundown, other, option);
+    return record->sundown->compare(record->sundown, other, option);
 }
 
 int compareWeather(Record *record, char *other, ComparisonOptionEnum option) {
-    return record->weather.compare(&record->weather, other, option);
+    return record->weather->compare(record->weather, other, option);
 }
 
 int updateGeoId(Record *record, char *newValue) {
-    return record->geo_id.update(&record->geo_id, newValue);
+    return record->geo_id->update(record->geo_id, newValue);
 }
 
 int updateGeoPos(Record *record, char *newValue) {
-    return record->geo_pos.update(&record->geo_pos, newValue);
+    return record->geo_pos->update(record->geo_pos, newValue);
 }
 
 int updateMeaDate(Record *record, char *newValue) {
-    return record->mea_date.update(&record->mea_date, newValue);
+    return record->mea_date->update(record->mea_date, newValue);
 }
 
 int updateLevel(Record *record, char *newValue) {
-    return record->level.update(&record->level, newValue);
+    return record->level->update(record->level, newValue);
 }
 
 int updateSunrise(Record *record, char *newValue) {
-    return record->sunrise.update(&record->sunrise, newValue);
+    return record->sunrise->update(record->sunrise, newValue);
 }
 
 int updateSundown(Record *record, char *newValue) {
-    return record->sundown.update(&record->sundown, newValue);
+    return record->sundown->update(record->sundown, newValue);
 }
 
 int updateWeather(Record *record, char *newValue) {
-    return record->weather.update(&record->weather, newValue);
+    return record->weather->update(record->weather, newValue);
 }
 
 char *getGeoIdStringRepresentation(Record *record) {
-    return record->geo_id.toString(&record->geo_id);
+    return record->geo_id->toString(record->geo_id);
 }
 
 char *getGeoPosStringRepresentation(Record *record) {
-    return record->geo_pos.toString(&record->geo_pos);
+    return record->geo_pos->toString(record->geo_pos);
 }
 
 char *getMeaDateStringRepresentation(Record *record) {
-    return record->mea_date.toString(&record->mea_date);
+    return record->mea_date->toString(record->mea_date);
 }
 
 char *getLevelStringRepresentation(Record *record) {
-    return record->level.toString(&record->level);
+    return record->level->toString(record->level);
 }
 
 char *getSunriseStringRepresentation(Record *record) {
-    return record->sunrise.toString(&record->sunrise);
+    return record->sunrise->toString(record->sunrise);
 }
 
 char *getSundownStringRepresentation(Record *record) {
-    return record->sundown.toString(&record->sundown);
+    return record->sundown->toString(record->sundown);
 }
 
 char *getWeatherStringRepresentation(Record *record) {
-    return record->weather.toString(&record->weather);
+    return record->weather->toString(record->weather);
 }
 
 int compareTwoGeoId(Record *record, Record *other, ComparisonOptionEnum option) {
-    return record->geo_id.compare(&record->geo_id, jumpToEqualSign(getGeoIdStringRepresentation(other)), option);
+    return record->geo_id->compare(record->geo_id, jumpToEqualSign(getGeoIdStringRepresentation(other)), option);
 }
 
 int compareTwoGeoPos(Record *record, Record *other, ComparisonOptionEnum option) {
-    return record->geo_pos.compare(&record->geo_pos, jumpToEqualSign(getGeoPosStringRepresentation(other)), option);
+    return record->geo_pos->compare(record->geo_pos, jumpToEqualSign(getGeoPosStringRepresentation(other)), option);
 }
 
 int compareTwoMeaDate(Record *record, Record *other, ComparisonOptionEnum option) {
-    return record->mea_date.compare(&record->mea_date, jumpToEqualSign(getMeaDateStringRepresentation(other)), option);
+    return record->mea_date->compare(record->mea_date, jumpToEqualSign(getMeaDateStringRepresentation(other)), option);
 }
 
 int compareTwoLevel(Record *record, Record *other, ComparisonOptionEnum option) {
-    return record->level.compare(&record->level, jumpToEqualSign(getLevelStringRepresentation(other)), option);
+    return record->level->compare(record->level, jumpToEqualSign(getLevelStringRepresentation(other)), option);
 }
 
 int compareTwoSunrise(Record *record, Record *other, ComparisonOptionEnum option) {
-    return record->sunrise.compare(&record->sunrise, jumpToEqualSign(getSunriseStringRepresentation(other)), option);
+    return record->sunrise->compare(record->sunrise, jumpToEqualSign(getSunriseStringRepresentation(other)), option);
 }
 
 int compareTwoSundown(Record *record, Record *other, ComparisonOptionEnum option) {
-    return record->sundown.compare(&record->sundown, jumpToEqualSign(getSundownStringRepresentation(other)), option);
+    return record->sundown->compare(record->sundown, jumpToEqualSign(getSundownStringRepresentation(other)), option);
 }
 
 int compareTwoWeather(Record *record, Record *other, ComparisonOptionEnum option) {
-    return record->weather.compare(&record->weather, jumpToEqualSign(getWeatherStringRepresentation(other)), option);
+    return record->weather->compare(record->weather, jumpToEqualSign(getWeatherStringRepresentation(other)), option);
 }
 
 static KeyMap keyMappings[] = {
-    {"geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId, updateGeoId, getGeoIdStringRepresentation, compareTwoGeoId},
-    {"geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos, updateGeoPos, getGeoPosStringRepresentation, compareTwoGeoPos},
-    {"mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate, updateMeaDate, getMeaDateStringRepresentation, compareTwoMeaDate},
-    {"level", initializeLevel, printLevel, validateLevel, compareLevel, updateLevel, getLevelStringRepresentation, compareTwoLevel},
-    {"sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise, updateSunrise, getSunriseStringRepresentation, compareTwoSunrise},
-    {"sundown", initializeSundown, printSundown, validateSundown, compareSundown, updateSundown, getSundownStringRepresentation, compareTwoSundown},
-    {"weather", initializeWeather, printWeather, validateWeather, compareWeather, updateWeather, getWeatherStringRepresentation, compareTwoWeather}
+    {
+        "geo_id", initializeGeoId, printGeoId, validateGeoId, compareGeoId, updateGeoId, getGeoIdStringRepresentation,
+        compareTwoGeoId
+    },
+    {
+        "geo_pos", initializeGeoPos, printGeoPos, validateGeoPos, compareGeoPos, updateGeoPos,
+        getGeoPosStringRepresentation, compareTwoGeoPos
+    },
+    {
+        "mea_date", initializeMeaDate, printMeaDate, validateMeaDate, compareMeaDate, updateMeaDate,
+        getMeaDateStringRepresentation, compareTwoMeaDate
+    },
+    {
+        "level", initializeLevel, printLevel, validateLevel, compareLevel, updateLevel, getLevelStringRepresentation,
+        compareTwoLevel
+    },
+    {
+        "sunrise", initializeSunrise, printSunrise, validateSunrise, compareSunrise, updateSunrise,
+        getSunriseStringRepresentation, compareTwoSunrise
+    },
+    {
+        "sundown", initializeSundown, printSundown, validateSundown, compareSundown, updateSundown,
+        getSundownStringRepresentation, compareTwoSundown
+    },
+    {
+        "weather", initializeWeather, printWeather, validateWeather, compareWeather, updateWeather,
+        getWeatherStringRepresentation, compareTwoWeather
+    }
 };
 
 int printKey(const char *key, Record *record) {
