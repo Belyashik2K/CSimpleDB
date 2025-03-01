@@ -359,26 +359,3 @@ int execute(Database *database, Query *query) {
 
     return 0;
 }
-
-// void printDatabase(Database *db) {
-//     if (!db || !db->head) {
-//         printf("Database is empty.\n");
-//         return;
-//     }
-//
-//     const RecordNode *current = db->head;
-//     while (current) {
-//         Record *r = current->data;
-//         printf("Record: %s %s %s %s %s %s %s\n",
-//                r->geo_id.toString(&r->geo_id),
-//                r->geo_pos.toString(&r->geo_pos),
-//                r->mea_date.toString(&r->mea_date),
-//                r->level.toString(&r->level),
-//                r->sunrise.toString(&r->sunrise),
-//                r->weather.toString(&r->weather),
-//                r->sundown.toString(&r->sundown)
-//         );
-//
-//         current = current->next;
-//     }
-// }

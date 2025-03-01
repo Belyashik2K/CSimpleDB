@@ -22,6 +22,7 @@ int main(void) {
         return 1;
     }
 
+    printf("File parsed, freeing the database...\n");
     freeDatabase(database);
     printf("Database freed, exiting...\n");
     return 0;

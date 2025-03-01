@@ -30,7 +30,7 @@ int parseFile(const char *filename, Database *database) {
         //                query->conditions[i].value);
         //     }
         // }
-        const int result = database->execute(database, query);
+        database->execute(database, query);
         // if (!result) {
         //     printf("Query execution failed.\n");
         // }

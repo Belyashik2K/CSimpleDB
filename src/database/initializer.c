@@ -3,8 +3,6 @@
 #include "../database/initializer.h"
 #include "../database/helper.h"
 
-#include <stdio.h>
-
 Database *initializeDatabase() {
     Database *database = malloc(sizeof(Database));
     if (!database) return NULL;
