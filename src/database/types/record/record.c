@@ -283,7 +283,17 @@ int updateRecord(Record *record, QueryField *field) {
 int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option, QueryField *field) {
     for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
         if (strcmp(field->field, keyMappings[i].key) == 0) {
-            return keyMappings[i].compareTwo(record, other, option);
+            if (keyMappings[i].compareTwo(record, other, EQUAL)) {
+                return 0;
+            }
+            if (keyMappings[i].compareTwo(record, other, LESS)) {
+                if (option == LESS) return 1;
+                return -1;
+            }
+            if (keyMappings[i].compareTwo(record, other, GREATER)) {
+                if (option == GREATER) return 1;
+                return -1;
+            }
         }
     }
     return 0;
