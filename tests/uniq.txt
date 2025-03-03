@@ -1,0 +1,38 @@
+insert sunrise='0:10:2',geo_id=0015,geo_pos="Luzi=buzi=",sundown='18:40:51',level=18,mea_date='01.03.2016',weather='cloudy'
+insert     sundown='18:40:51',geo_id=-10,weather='snow',mea_date='20.03.2016',sunrise='23:5:59',level=18,geo_pos="Luzi  'buzi'  "
+insert   level=004,weather='rain',geo_pos="Penkin",sundown='19:07:42',geo_id=-00000000000099,sunrise='23:59:59',mea_date='8.2.2017'
+insert   level=-10,sundown='18:40:52',weather='rain',geo_pos="Bobrovsky",geo_id=-00000000000099,sunrise='19:05:41',mea_date='01.03.2017'
+insert    weather='cloudy',sundown='18:40:52',mea_date='01.03.2016',sunrise='0:10:2',geo_pos="  Luzi    'Buzi',      m. Muzi  ",level=004,geo_id=57
+insert  sundown='1:1:1',sunrise='1:1:1',level=00000000000657,mea_date='28.02.1900',geo_id=15,geo_pos="  Luzi    'Buzi',      m. Muzi  ",weather='snow'
+insert     geo_id=551,level=-2147483648,mea_date='10.04.2016',sunrise='0:1:2',weather='rain',sundown='23:59:59',geo_pos="Petrov"
+insert     geo_id=-19,weather='cloudy',mea_date='29.02.2000',level=0015,sundown='18:40:52',sunrise='23:59:59',geo_pos="Luzi buzi"
+insert     level=-10,geo_id=00000000000657,geo_pos="Bobrov",mea_date='01.03.2016',sunrise='19:07:55',sundown='19:07:03',weather='fair'
+insert    mea_date='29.12.2016',sundown='0:1:2',geo_pos="Kuzin",geo_id=-00000000000099,level=0016,sunrise='23:59:59',weather='cloudy'
+insert    geo_pos="Golosov",geo_id=0015,sunrise='19:07:42',level=-00000000000051,mea_date='10.04.2016',sundown='00:00:0',weather='snow'
+insert   sunrise='0:10:2',geo_id=041,weather='snow',geo_pos="Petrov",sundown='00:00:0',level=-00000000000099,mea_date='08.1.2017'
+insert     geo_pos="Kuzin",mea_date='15.06.2016',sundown='0:1:2',geo_id=57,level=0,sunrise='18:42:00',weather='rain'
+insert     sundown='19:07:42',geo_id=-10,weather='snow',mea_date='29.02.1904',geo_pos="Kuzin",sunrise='19:07:03',level=-00000000000051
+insert     level=2147483647,sundown='19:07:03',geo_pos="Suslikov",sunrise='19:07:55',geo_id=2147483647,weather='cloudy',mea_date='28.02.1900'
+insert    weather='cloudy',sundown='0:10:2',geo_id=0,mea_date='01.03.2017',level=-00000000000099,sunrise='23:5:59',geo_pos=""
+insert level=18,geo_pos="Suslikov",mea_date='28.02.2017',geo_id=0,sunrise='19:07:55',weather='snow',sundown='19:07:03'
+insert geo_pos="Luzi\"buzi\"",geo_id=18,level=18,sundown='19:07:42',mea_date='28.02.2017',sunrise='0:10:2',weather='fair'
+insert    geo_id=-00000000000051,sunrise='18:40:52',sundown='18:40:51',geo_pos="Bobrov",mea_date='01.03.2016',level=-00000000000099,weather='cloudy'
+insert sunrise='19:07:03',sundown='18:40:51',geo_pos="Luzi-buzi",geo_id=15,mea_date='28.02.1900',weather='cloudy',level=-00000000000051
+insert  sundown='23:5:59',mea_date='15.06.2016',geo_pos="Albin",sunrise='23:5:59',geo_id=00000000000657,level=0,weather='fair'
+insert    sundown='0:10:2',weather='snow',mea_date='10.04.2016',geo_pos="=Luzi=buzi=",level=-19,sunrise='23:5:59',geo_id=551
+insert geo_pos="Golosov",sundown='00:00:0',weather='fair',mea_date='15.06.2016',sunrise='18:40:51',geo_id=0015,level=2147483647
+insert    mea_date='29.02.1904',geo_id=0015,weather='snow',sunrise='18:40:52',level=2147483647,sundown='19:07:03',geo_pos=""
+insert level=00000000000047,sunrise='23:59:59',geo_id=57,mea_date='20.03.2016',sundown='19:07:03',weather='snow',geo_pos="Penkin"
+insert  sundown='18:40:52',geo_id=-00000000000051,weather='cloudy',level=00000000000657,geo_pos="Golosov",mea_date='01.03.2016',sunrise='23:59:59'
+insert  geo_pos="",mea_date='01.03.2017',sundown='19:07:43',geo_id=15,sunrise='23:59:59',weather='fair',level=15
+insert   geo_pos="Luzi-buzi",mea_date='8.2.2017',level=0015,sundown='19:07:03',geo_id=00000000000657,weather='snow',sunrise='23:59:59'
+insert     sundown='00:00:0',level=-10,weather='rain',mea_date='29.02.2016',geo_id=40,geo_pos="Suslikov",sunrise='0:1:2'
+insert    level=41,weather='fair',mea_date='29.02.2000',geo_pos="Luzi=buzi=",geo_id=57,sunrise='18:40:51',sundown='18:40:52'
+uniq mea_date,weather,level,sundown
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown
+uniq geo_id,mea_date,weather
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown
+uniq geo_pos,sundown
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown
+uniq geo_id
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown

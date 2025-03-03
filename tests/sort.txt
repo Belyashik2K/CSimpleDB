@@ -1,0 +1,18 @@
+insert   level=57,weather='snow',mea_date='31.12.2016',geo_id=41,geo_pos="Luzi  'buzi'  ",sunrise='18:40:52',sundown='18:42:00'
+insert    mea_date='29.02.2000',sunrise='0:1:2',geo_pos="  Luzi    'Buzi',      m. Muzi  ",level=004,geo_id=00000000000657,sundown='18:40:51',weather='rain'
+insert    geo_id=15,weather='rain',geo_pos="  Luzi   buzi",sunrise='00:00:0',sundown='18:40:52',level=41,mea_date='01.02.2017'
+insert level=-2147483648,weather='rain',geo_id=15,mea_date='10.04.2016',sundown='18:42:00',sunrise='18:40:51',geo_pos="Luzi Buzi\\\\\\\\"
+insert weather='rain',sundown='0:1:2',level=40,mea_date='28.02.2017',geo_pos="Luzi\"buzi\"",sunrise='18:40:51',geo_id=57
+insert    weather='fair',sundown='18:42:00',level=551,geo_id=-00000000000099,sunrise='18:41:50',geo_pos="Luzi buzi",mea_date='29.02.2016'
+insert  level=004,sunrise='0:1:2',sundown='0:1:2',weather='rain',geo_id=004,geo_pos="Luzi Buzi\\\\\\\\",mea_date='10.04.2016'
+insert     geo_pos="Luzi\\buzi",weather='snow',mea_date='14.04.2016',level=041,sunrise='23:59:59',geo_id=0016,sundown='0:10:2'
+insert   geo_pos="Luzi\\buzi",sunrise='0:10:2',geo_id=18,sundown='19:07:55',weather='cloudy',mea_date='14.04.2016',level=00000000000047
+insert   sunrise='19:07:55',weather='cloudy',mea_date='08.1.2017',sundown='19:07:42',level=40,geo_pos="Luzi-buzi",geo_id=041
+sort mea_date=desc
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown
+sort level=desc,mea_date=desc
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown
+sort sundown=desc,geo_pos=asc,mea_date=desc
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown
+sort geo_id=asc,sundown=asc,geo_pos=desc,mea_date=desc
+select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown

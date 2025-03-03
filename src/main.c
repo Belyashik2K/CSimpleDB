@@ -4,7 +4,7 @@
 #include "utils/parser/file_parser.h"
 #include "utils/writer/file_writer.h"
 
-#define INPUT_FILE "D:/test.txt"
+#define INPUT_FILE "../tests/select.txt"
 
 int main(void) {
 

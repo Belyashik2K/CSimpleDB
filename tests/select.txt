@@ -1,0 +1,21 @@
+insert sundown='19:07:03',level=0016,geo_pos="Bobrovsky",mea_date='01.03.2016',geo_id=0015,sunrise='19:05:41',weather='cloudy'
+insert     mea_date='15.06.2016',geo_id=551,weather='rain',geo_pos="Penkin",sunrise='23:59:59',level=0015,sundown='19:07:03'
+insert mea_date='29.12.2016',geo_id=0015,level=18,geo_pos="Albin",weather='cloudy',sunrise='18:40:51',sundown='18:40:51'
+insert   geo_pos="Petrov",weather='fair',level=57,geo_id=40,sunrise='19:07:03',mea_date='01.03.2016',sundown='19:07:43'
+insert  geo_id=-10,level=004,mea_date='28.02.2017',sundown='18:42:00',sunrise='19:07:55',geo_pos="Suslikov",weather='fair'
+select   weather,sunrise,sundown,geo_pos,level,mea_date,geo_id
+select     mea_date,weather,geo_id,level,sunrise
+select   level,geo_pos,mea_date
+select     sundown
+select   sunrise,weather   mea_date<='01.02.2017'
+select    weather,mea_date,sundown,level    weather/in/['snow','cloudy','rain']
+select mea_date,level,sunrise,sundown,weather geo_id>15
+select   sunrise,geo_id,geo_pos,mea_date   weather!='snow'   level==-19
+select   level,geo_id,weather,sundown,geo_pos,mea_date   weather=='snow'   geo_id>0015
+select    level    geo_pos>"Suslikov"    geo_pos>"Kuzin"
+select    level,sunrise,geo_pos,geo_id,weather,mea_date    weather/in/[]    mea_date<='28.02.2017'    geo_id<=57
+select  geo_id,sunrise,geo_pos,weather,sundown,level,mea_date  sundown<='23:59:59'  geo_pos<"Kuzin"  sundown!='19:07:42'
+select   sunrise,weather,level,geo_id,mea_date,sundown,geo_pos   level>15   geo_id>=40   weather/in/[]
+select     geo_pos,level,sundown,geo_id,sunrise,weather     mea_date<='14.04.2016'     sundown<'19:07:03'     weather=='snow'     level==40
+select     geo_id     level>551     mea_date>='20.03.2016'     mea_date!='29.12.2016'     sunrise=='19:07:43'
+select   weather   sunrise!='23:59:59'   sundown=='18:42:00'   mea_date<'20.12.2016'   geo_pos>="Vodkin"

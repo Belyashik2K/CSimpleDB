@@ -1,0 +1,54 @@
+insert geo_pos="Golosov",mea_date='20.12.2016',level=18,sunrise='18:40:51',geo_id=15,sundown='19:05:41',weather='rain'
+insert sundown='19:07:43',mea_date='01.03.2016',geo_id=0016,geo_pos="Vodkin",level=41,sunrise='19:07:42',weather='fair'
+insert geo_id=15,weather='rain',sunrise='18:41:50',level=0015,geo_pos="Suslikov",sundown='19:05:41',mea_date='15.06.2016'
+insert mea_date='20.03.2016',geo_pos="Bobrov",weather='rain',sunrise='19:07:42',geo_id=0015,sundown='18:42:00',level=15
+insert sundown='19:07:55',level=15,geo_id=004,geo_pos="Vodkin",sunrise='19:07:42',weather='rain',mea_date='15.06.2016'
+insert level=0015,weather='rain',mea_date='01.03.2017',sunrise='19:07:42',geo_id=40,sundown='19:05:41',geo_pos="Vodkin"
+insert geo_pos="Penkin",weather='fair',sunrise='23:59:59',level=18,geo_id=004,sundown='23:59:59',mea_date='15.06.2016'
+insert weather='cloudy',level=004,geo_id=041,mea_date='01.03.2017',geo_pos="Bobrov",sundown='18:42:00',sunrise='19:07:55'
+insert mea_date='10.04.2016',sunrise='19:07:43',geo_pos="Bobrovsky",sundown='18:40:51',weather='rain',level=0,geo_id=0
+insert geo_pos="Albin",mea_date='01.03.2017',geo_id=0016,sundown='18:41:50',weather='cloudy',sunrise='18:41:50',level=41
+insert geo_pos="Kuzin",weather='rain',sunrise='19:07:55',level=40,sundown='19:07:03',mea_date='01.03.2017',geo_id=18
+insert geo_id=0015,level=57,sundown='19:07:42',weather='cloudy',mea_date='15.06.2016',geo_pos="Petrov",sunrise='19:07:03'
+insert geo_pos="Bobrovsky",level=-19,sundown='23:59:59',sunrise='18:42:00',mea_date='10.04.2016',weather='cloudy',geo_id=40
+insert sunrise='18:40:52',sundown='18:41:50',geo_id=15,level=40,geo_pos="Bobrovsky",mea_date='15.06.2016',weather='snow'
+insert geo_pos="Penkin",mea_date='20.12.2016',weather='fair',level=57,geo_id=041,sundown='18:40:52',sunrise='18:41:50'
+insert weather='rain',sundown='19:07:55',geo_id=-10,geo_pos="Bobrovsky",level=15,mea_date='01.02.2017',sunrise='18:41:50'
+insert mea_date='28.02.2017',sundown='19:07:43',weather='cloudy',geo_id=-19,geo_pos="Vodkin",level=0015,sunrise='19:07:55'
+insert sunrise='18:40:51',level=551,mea_date='10.04.2016',geo_pos="Kuzin",sundown='19:05:41',geo_id=041,weather='fair'
+insert sunrise='18:40:51',mea_date='01.03.2016',geo_id=551,geo_pos="Vodkin",weather='cloudy',level=57,sundown='18:42:00'
+insert geo_id=004,level=004,geo_pos="Suslikov",sunrise='19:05:41',mea_date='01.03.2017',sundown='23:59:59',weather='rain'
+insert sunrise='18:42:00',weather='cloudy',mea_date='20.03.2016',sundown='19:07:55',geo_pos="Vodkin",level=004,geo_id=-19
+insert level=15,geo_pos="Bobrovsky",weather='fair',sunrise='19:07:55',sundown='23:59:59',geo_id=0,mea_date='01.03.2017'
+insert sundown='18:40:52',weather='snow',level=0016,geo_pos="Golosov",geo_id=41,mea_date='01.03.2017',sunrise='19:07:55'
+insert mea_date='28.02.2017',geo_id=18,sunrise='18:41:50',weather='rain',sundown='18:41:50',geo_pos="Suslikov",level=41
+insert geo_id=0015,geo_pos="Petrov",sundown='23:59:59',sunrise='23:59:59',mea_date='01.02.2017',level=041,weather='fair'
+insert geo_id=0015,geo_pos="Petrov",sundown='18:40:52',weather='rain',sunrise='19:07:55',level=15,mea_date='10.04.2016'
+insert mea_date='15.06.2016',sunrise='19:07:03',sundown='18:40:51',weather='snow',geo_pos="Penkin",geo_id=551,level=0016
+insert sundown='19:07:43',sunrise='18:40:52',geo_id=18,level=041,weather='rain',geo_pos="Petrov",mea_date='20.03.2016'
+insert level=-19,geo_pos="Penkin",weather='rain',sunrise='19:07:03',sundown='18:41:50',mea_date='10.04.2016',geo_id=-10
+insert mea_date='01.02.2017',weather='snow',sundown='18:40:52',sunrise='19:07:42',level=18,geo_id=0015,geo_pos="Bobrov"
+update level=18     geo_pos=="Suslikov"     sunrise<'18:40:52'     weather=='snow'     weather/in/['cloudy','snow']
+select     geo_id,geo_pos,level,sunrise,mea_date,sundown,weather
+update geo_pos="Bobrov"     mea_date=='20.03.2016'     level<0015     level<=0016
+select     geo_pos,sundown,sunrise,level,weather,mea_date,geo_id
+update geo_pos="Bobrov"  sunrise!='19:05:41'  mea_date=='15.06.2016'
+select  mea_date,geo_id,sunrise,geo_pos,sundown,level,weather
+update geo_pos="Golosov"    sundown=='19:07:43'
+select    weather,sundown,level,mea_date,sunrise,geo_id,geo_pos
+update level=-10,weather='fair'     level>=41     sundown<='18:42:00'     geo_pos<="Petrov"     sundown=='19:05:41'
+select     mea_date,level,sunrise,geo_pos,weather,sundown,geo_id
+update geo_id=40,sunrise='19:07:42' mea_date<='01.03.2016' geo_id<041 level>0015
+select sundown,geo_pos,weather,sunrise,geo_id,mea_date,level
+update weather='fair',sunrise='18:40:52'     sunrise>='18:40:51'     level<=15
+select     sundown,mea_date,weather,geo_id,geo_pos,level,sunrise
+update weather='snow',geo_pos="Bobrovsky" level>-19
+select sundown,level,sunrise,weather,geo_pos,geo_id,mea_date
+update sundown='19:07:42',mea_date='20.12.2016',geo_id=041    geo_pos<="Bobrov"    geo_id<0    mea_date>='01.03.2017'    geo_pos>"Golosov"
+select    sundown,level,geo_pos,weather,sunrise,geo_id,mea_date
+update mea_date='20.12.2016',sunrise='19:07:55',level=40   geo_id==004   sunrise<'18:40:51'   level<=15
+select   weather,mea_date,level,geo_pos,geo_id,sunrise,sundown
+update mea_date='01.03.2016',sunrise='18:40:51',level=-10   mea_date!='01.02.2017'   sunrise>'18:42:00'
+select   geo_id,level,sundown,geo_pos,weather,sunrise,mea_date
+update geo_id=0016,sunrise='23:59:59',geo_pos="Vodkin"     level<=40
+select     geo_pos,sunrise,geo_id,mea_date,level,sundown,weather
