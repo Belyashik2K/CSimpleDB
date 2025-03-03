@@ -376,5 +376,21 @@ Query *queryFactory(char *queryStr) {
         return NULL;
     }
 
+    if (query->field_count != 0) {
+        for (int i = 0; i < query->field_count; i++) {
+            if (
+                query->fields[i].value && query->action.value == SELECT ||
+                query->fields[i].value && query->action.value == UNIQUE ||
+                query->fields[i].value && query->action.value == DELETE ||
+                !query->fields[i].value && query->action.value == UPDATE ||
+                !query->fields[i].value && query->action.value == INSERT ||
+                !query->fields[i].value && query->action.value == SORT
+            ) {
+                free(query);
+                return NULL;
+            }
+        }
+    }
+
     return query;
 }
