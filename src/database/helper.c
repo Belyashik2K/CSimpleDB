@@ -65,7 +65,13 @@ int countAffectedRecords(Database *db, Query *query) {
 }
 
 int makeSelectQuery(Database *db, Query *query) {
-    if (!db || !query || !db->head) return 0;
+    if (!query) {
+        return 0;
+    }
+    if (!db || !db->head) {
+        writeCountOfAffectedRecordsToFile(SELECT, 0);
+        return 1;
+    }
 
     const RecordNode *current = db->head;
 
