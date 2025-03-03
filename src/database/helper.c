@@ -90,29 +90,32 @@ int makeDeleteQuery(Database *db, Query *query) {
     const int count = countAffectedRecords(db, query);
     writeCountOfAffectedRecordsToFile(DELETE, count);
 
-    while (current) {
+    while (current != NULL) {
+        RecordNode *next = current->next;
+
         if (checkIfRecordSatisfiesConditions(current->data, query)) {
-            RecordNode *toDelete = current;
-
             if (prev == NULL) {
-                db->head = current->next;
+                db->head = next;
             } else {
-                prev->next = current->next;
+                prev->next = next;
             }
-            current = current->next;
 
-            free(toDelete->data);
-            free(toDelete);
+            if (current == db->tail) {
+                db->tail = prev;
+            }
+
+            free(current->data);
+            free(current);
             db->size--;
         } else {
             prev = current;
-            current = current->next;
         }
+
+        current = next;
     }
 
     return 1;
 }
-
 
 int makeUpdateQuery(Database *db, Query *query) {
     if (!db || !query) return 0;

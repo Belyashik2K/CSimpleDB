@@ -344,6 +344,8 @@ Query *queryFactory(char *queryStr) {
             free(query);
             return NULL;
         }
+    } else {
+        query->field_count = 0;
     }
 
     Condition *conditions = findConditions(&queryStrCopy, query);
