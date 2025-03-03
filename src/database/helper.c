@@ -286,6 +286,9 @@ int validateFieldsAndConditions(Query *query) {
             printf("Invalid field: %s\n", field.field);
             return 0;
         }
+        if (strcmp(field.field, "weather") == 0 && query->action.value == SORT) {
+            return 0;
+        }
 
         if (query->action.value != SELECT && query->action.value != UNIQUE && query->action.value != SORT) {
             if (!validateValue(field.field, field.value)) {
