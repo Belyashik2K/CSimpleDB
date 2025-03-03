@@ -36,7 +36,7 @@ int is_valid_date(
     return 1;
 }
 
-char *dateToString(const Date *self) {
+char *dateToString(Date *self) {
     const int bufSize = strlen(self->field) + 50;
     char *buffer = malloc(bufSize);
     if (!buffer) return NULL;
@@ -83,7 +83,7 @@ int greaterOrEqualDate(const Date *self, char *other) {
     return greaterDate(self, other) || equalDate(self, other);
 }
 
-int compareDates(const Date *self, char *other, ComparisonOptionEnum option) {
+int compareDates(Date *self, char *other, ComparisonOptionEnum option) {
     switch (option) {
         case EQUAL:
             return equalDate(self, other);

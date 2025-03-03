@@ -40,7 +40,7 @@ char *stringToString(CustomString *self) {
     return buffer;
 }
 
-int equalString(const CustomString *self, char *other) {
+int equalString(CustomString *self, char *other) {
     CustomString *otherString = stringFactory(other, self->field);
     if (!otherString) return 0;
 
@@ -50,11 +50,11 @@ int equalString(const CustomString *self, char *other) {
     return result;
 }
 
-int notEqualString(const CustomString *self, char *other) {
+int notEqualString(CustomString *self, char *other) {
     return !equalString(self, other);
 }
 
-int lessString(const CustomString *self, char *other) {
+int lessString(CustomString *self, char *other) {
     CustomString *otherString = stringFactory(other, self->field);
     if (!otherString) return 0;
 
@@ -64,7 +64,7 @@ int lessString(const CustomString *self, char *other) {
     return result;
 }
 
-int greaterString(const CustomString *self, char *other) {
+int greaterString(CustomString *self, char *other) {
     CustomString *otherString = stringFactory(other, self->field);
     if (!otherString) {
         return 0;
@@ -76,15 +76,15 @@ int greaterString(const CustomString *self, char *other) {
     return result;
 }
 
-int lessOrEqualString(const CustomString *self, char *other) {
+int lessOrEqualString(CustomString *self, char *other) {
     return lessString(self, other) || equalString(self, other);
 }
 
-int greaterOrEqualString(const CustomString *self, char *other) {
+int greaterOrEqualString(CustomString *self, char *other) {
     return greaterString(self, other) || equalString(self, other);
 }
 
-int compareStrings(const CustomString *self, char *other, ComparisonOptionEnum option) {
+int compareStrings(CustomString *self, char *other, ComparisonOptionEnum option) {
     switch (option) {
         case EQUAL:
             return equalString(self, other);

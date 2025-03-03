@@ -4,18 +4,18 @@
 
 #include "../time/time.h"
 
-int equalTime(const Time *self, char *other) {
+int equalTime(Time *self, char *other) {
     Time *otherTime = timeFactory(other, self->field);
     if (!otherTime) return 0;
 
     return self->hour == otherTime->hour && self->minute == otherTime->minute && self->second == otherTime->second;
 }
 
-int notEqualTime(const Time *self, char *other) {
+int notEqualTime(Time *self, char *other) {
     return !equalTime(self, other);
 }
 
-int lessTime(const Time *self, char *other) {
+int lessTime(Time *self, char *other) {
     Time *otherTime = timeFactory(other, self->field);
     if (!otherTime) {
         return 0;
@@ -33,19 +33,19 @@ int lessTime(const Time *self, char *other) {
     return 0;
 }
 
-int greaterTime(const Time *self, char *other) {
+int greaterTime(Time *self, char *other) {
     return !lessTime(self, other) && notEqualTime(self, other);
 }
 
-int lessOrEqualTime(const Time *self, char *other) {
+int lessOrEqualTime(Time *self, char *other) {
     return lessTime(self, other) || equalTime(self, other);
 }
 
-int greaterOrEqualTime(const Time *self, char *other) {
+int greaterOrEqualTime(Time *self, char *other) {
     return greaterTime(self, other) || equalTime(self, other);
 }
 
-int compareTimes(const Time *self, char *other, ComparisonOptionEnum option) {
+int compareTimes(Time *self, char *other, ComparisonOptionEnum option) {
     switch (option) {
         case EQUAL:
             return equalTime(self, other);
@@ -64,7 +64,7 @@ int compareTimes(const Time *self, char *other, ComparisonOptionEnum option) {
     }
 }
 
-char *timeToString(const Time *self) {
+char *timeToString(Time *self) {
     const int bufSize = strlen(self->field) + 50;
     char *buffer = malloc(bufSize);
     if (!buffer) return NULL;

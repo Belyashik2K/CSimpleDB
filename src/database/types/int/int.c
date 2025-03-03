@@ -59,7 +59,7 @@ int isInsideIntBounds(const char *str, const int isNegative) {
     return 1;
 }
 
-char *intToString(const CustomInt *self) {
+char *intToString(CustomInt *self) {
     const int bufSize = strlen(self->field) + 50;
     char *buffer = malloc(bufSize);
     if (!buffer) return NULL;
@@ -67,37 +67,37 @@ char *intToString(const CustomInt *self) {
     return buffer;
 }
 
-int equalInt(const CustomInt *self, char *other) {
+int equalInt(CustomInt *self, char *other) {
     CustomInt *otherInt = intFactory(other, self->field);
     if (!otherInt) return 0;
 
     return self->value == otherInt->value;
 }
 
-int notEqualInt(const CustomInt *self, char *other) {
+int notEqualInt(CustomInt *self, char *other) {
     return !equalInt(self, other);
 }
 
-int lessInt(const CustomInt *self, char *other) {
+int lessInt(CustomInt *self, char *other) {
     CustomInt *otherInt = intFactory(other, self->field);
     if (!otherInt) return 0;
 
     return self->value < otherInt->value;
 }
 
-int greaterInt(const CustomInt *self, char *other) {
+int greaterInt(CustomInt *self, char *other) {
     return !lessInt(self, other) && notEqualInt(self, other);
 }
 
-int lessOrEqualInt(const CustomInt *self, char *other) {
+int lessOrEqualInt(CustomInt *self, char *other) {
     return lessInt(self, other) || equalInt(self, other);
 }
 
-int greaterOrEqualInt(const CustomInt *self, char *other) {
+int greaterOrEqualInt(CustomInt *self, char *other) {
     return greaterInt(self, other) || equalInt(self, other);
 }
 
-int compareInts(const CustomInt *self, char *other, ComparisonOptionEnum option) {
+int compareInts(CustomInt *self, char *other, ComparisonOptionEnum option) {
     switch (option) {
         case EQUAL:
             return equalInt(self, other);

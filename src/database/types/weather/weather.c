@@ -85,7 +85,7 @@ int validateValuesInList(const char *input) {
     return 1;
 }
 
-int findInList(const Weather *self, char *other) {
+int findInList(Weather *self, char *other) {
     char *temp = strdup(other);
     if (!temp) {
         return 0;
@@ -137,16 +137,16 @@ int findInList(const Weather *self, char *other) {
     return 0;
 }
 
-int inWeatherList(const Weather *self, char *other) {
+int inWeatherList(Weather *self, char *other) {
     if (!isValueList(other)) return 0;
     return findInList(self, other) == 1 ? 1 : 0;
 }
 
-int notInWeatherList(const Weather *self, char *other) {
+int notInWeatherList(Weather *self, char *other) {
     return findInList(self, other) == 0 ? 1 : 0;
 }
 
-int equalWeather(const Weather *self, char *other) {
+int equalWeather(Weather *self, char *other) {
     Weather *otherWeather = weatherFactory(other, self->field);
     if (!otherWeather) return 0;
 
@@ -155,11 +155,11 @@ int equalWeather(const Weather *self, char *other) {
     return result;
 }
 
-int notEqualWeather(const Weather *self, char *other) {
+int notEqualWeather(Weather *self, char *other) {
     return !equalWeather(self, other);
 }
 
-int compareWeathers(const Weather *self, char *other, ComparisonOptionEnum option) {
+int compareWeathers(Weather *self, char *other, ComparisonOptionEnum option) {
     switch (option) {
         case EQUAL:
             return equalWeather(self, other);
