@@ -25,6 +25,61 @@ int isValueList(const char *input) {
     return strchr(input, '[') != NULL && strchr(input, ']') != NULL;
 }
 
+int validateValuesInList(const char *input) {
+    char *temp = strdup(input);
+    if (!temp) {
+        return 0;
+    }
+
+    char *start = strchr(temp, '[');
+    char *end = strrchr(temp, ']');
+
+    if (!start || !end || start > end) {
+        free(temp);
+        return 0;
+    }
+
+    *end = '\0';
+    start++;
+
+    char *inside = trimWhitespace(start);
+    if (strlen(inside) == 0) {
+        free(temp);
+        return 0;
+    }
+
+    char *token = strtok(inside, ",");
+
+    while (token != NULL) {
+        token = trimWhitespace(token);
+
+        int len = strlen(token);
+        if (len >= 2 && token[0] == '\'' && token[len - 1] == '\'') {
+            token[len - 1] = '\0';
+            token++;
+            len -= 2;
+        }
+
+        int valid = 0;
+        for (int i = 0; i < WEATHER_COUNT; i++) {
+            if (strcmp(token, weather_strings[i]) == 0) {
+                valid = 1;
+                break;
+            }
+        }
+
+        if (!valid) {
+            free(temp);
+            return 0;
+        }
+
+        token = strtok(NULL, ",");
+    }
+
+    free(temp);
+    return 1;
+}
+
 int findInList(const Weather *self, char *other) {
     char *temp = strdup(other);
     if (!temp) {
@@ -128,7 +183,7 @@ Weather *weatherFactory(const char *weatherString, const char *field) {
     int valid = 0;
 
     if (isValueList(weatherString)) {
-        valid = 1;
+        valid = validateValuesInList(weatherString);
     }
 
     int i = 0;
