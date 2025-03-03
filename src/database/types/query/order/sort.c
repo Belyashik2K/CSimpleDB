@@ -19,6 +19,7 @@ SortEnum sortFromString(const char *str) {
 }
 
 Sort *sortFactory(char *sortString) {
+    if (!sortString) return NULL;
     const SortEnum sortEnum = sortFromString(sortString);
     if (sortEnum == SORT_COUNT) return NULL;
 
