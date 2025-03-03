@@ -12,7 +12,8 @@ const char *actionStrings[] = {
     "sort"
 };
 
-ActionEnum actionFromString(const char *str) {
+ActionEnum actionFromString(char *str) {
+    str[strcspn(str, "\n")] = 0;
     for (int i = 0; i < ACTION_COUNT; i++) {
         if (strcmp(str, actionStrings[i]) == 0) {
             return (ActionEnum) i;
