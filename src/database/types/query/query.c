@@ -370,7 +370,8 @@ Query *queryFactory(char *queryStr) {
         query->action.value == INSERT && query->field_count == 0 ||
         query->action.value == DELETE && query->field_count != 0 ||
         query->action.value == UPDATE && query->field_count == 0 ||
-        query->action.value == UNIQUE && query->field_count == 0
+        query->action.value == UNIQUE && query->field_count == 0 ||
+        query->action.value == INSERT && query->condition_count != 0
     ) {
         free(query);
         return NULL;
