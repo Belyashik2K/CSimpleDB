@@ -83,7 +83,7 @@ typedef struct {
 
     int (*update)(Record *, char *);
 
-    char *(*toString)(void *);
+    char *(*toString)(Record *);
 
     int (*compareTwo)(Record *, Record *, ComparisonOptionEnum);
 } KeyMap;
