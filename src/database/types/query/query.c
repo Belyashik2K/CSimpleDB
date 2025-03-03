@@ -170,7 +170,7 @@ char *findAction(char **line) {
     while (**line != ' ') {
         if (**line == '\0') {
             printf("Error: No action found\n");
-            return NULL;
+            break;
         }
         endIndex++;
         (*line)++;
