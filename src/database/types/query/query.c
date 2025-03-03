@@ -192,6 +192,12 @@ QueryField *findFields(char **line, Query *query) {
     int fieldCount = 0;
     const unsigned long long strLength = strlen(*line);
 
+    if (strLength == 0) {
+        query->field_count = 0;
+        query->fields = fields;
+        return fields;
+    }
+
     const char *startPtr = *line;
     for (int i = 0; i <= strLength; i++) {
         checkQuotes(*line, i, &inQuotes, &lastSeenQuoteCode);
@@ -263,6 +269,12 @@ Condition *findConditions(char **line, Query *query) {
     char lastSeenQuoteCode = 0;
     int conditionsCount = 0;
     const unsigned long long strLength = strlen(*line);
+
+    if (strLength == 0) {
+        query->condition_count = 0;
+        query->conditions = conditions;
+        return conditions;
+    }
 
     char *startPtr = *line;
     for (int i = 0; i <= strLength; i++) {
@@ -351,6 +363,18 @@ Query *queryFactory(char *queryStr) {
     Condition *conditions = findConditions(&queryStrCopy, query);
     if (!conditions) {
         free(queryStrCopy);
+        free(query);
+        return NULL;
+    }
+
+    if (
+        query->action.value == SORT && query->field_count == 0 ||
+        query->action.value == SELECT && query->field_count == 0 ||
+        query->action.value == INSERT && query->field_count == 0 ||
+        query->action.value == DELETE && query->field_count != 0 ||
+        query->action.value == UPDATE && query->field_count == 0 ||
+        query->action.value == UNIQUE && query->field_count == 0
+    ) {
         free(query);
         return NULL;
     }
