@@ -344,7 +344,6 @@ Query *queryFactory(char *queryStr) {
     Query *query = malloc(sizeof(Query));
 
     if (!query) {
-        free(queryStrCopy);
         return NULL;
     }
     query->action = *action;
@@ -352,7 +351,6 @@ Query *queryFactory(char *queryStr) {
     if (query->action.value != DELETE) {
         QueryField *fields = findFields(&queryStrCopy, query);
         if (!fields) {
-            free(queryStrCopy);
             free(query);
             return NULL;
         }
@@ -362,7 +360,6 @@ Query *queryFactory(char *queryStr) {
 
     Condition *conditions = findConditions(&queryStrCopy, query);
     if (!conditions) {
-        free(queryStrCopy);
         free(query);
         return NULL;
     }
