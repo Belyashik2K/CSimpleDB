@@ -111,6 +111,7 @@ void writeIncorrectLineToFile(const char *line) {
     if (!file) return;
 
     fprintf(file, "incorrect:'%.20s'\n", line);
+    fclose(file);
 }
 
 void writeMemstat() {
