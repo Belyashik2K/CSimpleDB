@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <string.h>
 
-#include "../../database/helper.h"
 #include "../../database/initializer.h"
 #include "../../database/types/query/query.h"
+#include "../../utils/writer/file_writer.h"
 
 #define MAX_LINE_LENGTH 65536
 
@@ -30,11 +29,10 @@ int parseFile(const char *filename, Database *database) {
         //                query->conditions[i].value);
         //     }
         // }
-        database->execute(database, query);
-        // if (!result) {
-        //     printf("Query execution failed.\n");
-        // }
-        // printf("\n");
+        const int executionResult = database->execute(database, query);
+        if (!executionResult) {
+            writeIncorrectLineToFile(line);
+        }
     }
 
     // printf("\nDatabase after parsing:\n");

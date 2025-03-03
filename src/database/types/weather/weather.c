@@ -31,6 +31,11 @@ int validateValuesInList(const char *input) {
         return 0;
     }
 
+    if (strcmp(temp, "[]") == 0) {
+        free(temp);
+        return 1;
+    }
+
     char *start = strchr(temp, '[');
     char *end = strrchr(temp, ']');
 
