@@ -93,6 +93,8 @@ sort
 sort weather=='cloudy'
 
 
-
-
 select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown,geo_id
+update sunrise='19:05:41' geo_id!=78
+delete geo_id==11
+uniq geo_id
+sort geo_id=asc
