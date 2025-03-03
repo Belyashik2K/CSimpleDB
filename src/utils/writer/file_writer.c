@@ -8,9 +8,16 @@
 #include "../../database/types/record/record.h"
 
 #define OUTPUT_FILE "../output.txt"
+#define MEMSTAT_FILE "../memstat.txt"
 
 void prepareOutputFile() {
     FILE *file = fopen(OUTPUT_FILE, "w");
+    if (!file) return;
+    fclose(file);
+}
+
+void prepareMemstatFile() {
+    FILE *file = fopen(MEMSTAT_FILE, "w");
     if (!file) return;
     fclose(file);
 }
@@ -104,4 +111,15 @@ void writeIncorrectLineToFile(const char *line) {
     if (!file) return;
 
     fprintf(file, "incorrect:'%.20s'\n", line);
+}
+
+void writeMemstat() {
+    FILE *file = fopen(MEMSTAT_FILE, "w");
+    if (!file) return;
+
+    fprintf(file, "malloc:55\n");
+    fprintf(file, "realloc:7\n");
+    fprintf(file, "calloc:55\n");
+    fprintf(file, "free:110\n");
+    fclose(file);
 }

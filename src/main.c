@@ -4,6 +4,8 @@
 #include "utils/parser/file_parser.h"
 #include "utils/writer/file_writer.h"
 
+#define INPUT_FILE "D:/test.txt"
+
 int main(void) {
 
     prepareOutputFile();
@@ -15,7 +17,7 @@ int main(void) {
     }
     printf("Database initialized, starting to parse the file...\n");
 
-    const int parsed = parseFile("D:/test.txt", database);
+    const int parsed = parseFile(INPUT_FILE, database);
     if (!parsed) {
         printf("Parsing failed, maybe the file does not exist?\n");
         freeDatabase(database);
@@ -24,6 +26,9 @@ int main(void) {
 
     printf("File parsed, freeing the database...\n");
     freeDatabase(database);
-    printf("Database freed, exiting...\n");
+    printf("Database freed...\n");
+    printf("Writing memstat.txt...\n");
+    writeMemstat();
+    printf("memstat.txt written, exiting...\n");
     return 0;
 }
