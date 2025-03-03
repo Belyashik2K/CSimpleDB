@@ -393,5 +393,16 @@ Query *queryFactory(char *queryStr) {
         }
     }
 
+    if (query->condition_count != 0) {
+        if (query->action.value == DELETE) {
+            if (query->condition_count >= 1 && !query->conditions[0].field && !query->conditions[0].value) {
+                query->condition_count = 0;
+                free(query->conditions);
+                free(query);
+                return NULL;
+            }
+        }
+    }
+
     return query;
 }
