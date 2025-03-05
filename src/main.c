@@ -4,7 +4,7 @@
 #include "utils/parser/file_parser.h"
 #include "utils/writer/file_writer.h"
 
-#define INPUT_FILE "../tests/update.txt"
+#define INPUT_FILE "../tests/ibks_1.txt"
 
 int main(void) {
 
