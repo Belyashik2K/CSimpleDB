@@ -4,7 +4,7 @@
 #include "../database/helper.h"
 
 Database *initializeDatabase() {
-    Database *database = malloc(sizeof(Database));
+    Database *database = (Database *) malloc(sizeof(Database));
     if (!database) return NULL;
     database->head = NULL;
     database->tail = NULL;

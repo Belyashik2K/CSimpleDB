@@ -10,7 +10,7 @@
 int makeInsertQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
 
-    RecordNode *newNode = malloc(sizeof(RecordNode));
+    RecordNode *newNode = (RecordNode *) malloc(sizeof(RecordNode));
     if (!newNode) return 0;
 
     Record *record = recordFactory(query);

@@ -23,7 +23,7 @@ Sort *sortFactory(char *sortString) {
     const SortEnum sortEnum = sortFromString(sortString);
     if (sortEnum == SORT_COUNT) return NULL;
 
-    Sort *sort = malloc(sizeof(Sort));
+    Sort *sort = (Sort *) malloc(sizeof(Sort));
     if (!sort) return NULL;
 
     sort->value = sortEnum;

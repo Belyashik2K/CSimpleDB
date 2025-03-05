@@ -23,7 +23,7 @@ void prepareMemstatFile() {
 }
 
 char *prepareSelectResult(Record *record, Query *query) {
-    char *result = calloc(1, sizeof(char));
+    char *result = (char *) calloc(1, sizeof(char));
     if (!result) {
         printf("Could not allocate memory\n");
         return NULL;
@@ -37,7 +37,7 @@ char *prepareSelectResult(Record *record, Query *query) {
             return NULL;
         }
 
-        char *new_result = realloc(result, strlen(result) + strlen(fieldString) + 2);
+        char *new_result = (char *) realloc(result, strlen(result) + strlen(fieldString) + 2);
         if (!new_result) {
             printf("Could not reallocate memory\n");
             free(result);

@@ -230,7 +230,7 @@ int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option
 }
 
 Record *recordFactory(Query *query) {
-    Record *record = malloc(sizeof(Record));
+    Record *record = (Record *) malloc(sizeof(Record));
     if (!record)
         return NULL;
 

@@ -87,7 +87,7 @@ QueryField queryFieldFactory(char *fieldString) {
     }
 
     int fieldLen = equalSign - fieldString;
-    char *fieldPart = malloc(fieldLen + 1);
+    char *fieldPart = (char *) malloc(fieldLen + 1);
     if (!fieldPart) {
         return queryField;
     }
@@ -95,7 +95,7 @@ QueryField queryFieldFactory(char *fieldString) {
     fieldPart[fieldLen] = '\0';
 
     int valueLen = strlen(equalSign + 1);
-    char *valuePart = malloc(valueLen + 1);
+    char *valuePart = (char *) malloc(valueLen + 1);
     if (!valuePart) {
         free(fieldPart);
         return queryField;
@@ -131,7 +131,7 @@ Condition conditionFactory(char *conditionString) {
     }
 
     const int fieldLen = opPos - conditionString;
-    char *fieldPart = malloc(fieldLen + 1);
+    char *fieldPart = (char *) malloc(fieldLen + 1);
     if (!fieldPart)
         return condition;
     strncpy(fieldPart, conditionString, fieldLen);
@@ -176,14 +176,14 @@ char *findAction(char **line) {
         (*line)++;
     }
 
-    char *action = malloc(endIndex + 1);
+    char *action = (char *) malloc(endIndex + 1);
     strncpy(action, *line - endIndex, endIndex);
     action[endIndex] = '\0';
     return action;
 }
 
 QueryField *findFields(char **line, Query *query) {
-    QueryField *fields = malloc(sizeof(QueryField));
+    QueryField *fields = (QueryField *) malloc(sizeof(QueryField));
     *line = skipSpaces(*line);
 
     int inQuotes = 0;
@@ -204,12 +204,12 @@ QueryField *findFields(char **line, Query *query) {
 
         if (!inQuotes && (*line)[i] == ',') {
             const long long endIndex = *line + i - startPtr;
-            char *field = malloc(endIndex + 1);
+            char *field = (char *) malloc(endIndex + 1);
             strncpy(field, startPtr, endIndex);
             field[endIndex] = '\0';
 
             const QueryField fieldObj = queryFieldFactory(prepareString(field));
-            fields = realloc(fields, sizeof(QueryField) * (fieldCount + 1));
+            fields = (QueryField *) realloc(fields, sizeof(QueryField) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
@@ -225,12 +225,12 @@ QueryField *findFields(char **line, Query *query) {
 
         if (i == strLength || (*line)[i] == ' ' && !inQuotes) {
             const long long endIndex = *line + i - startPtr;
-            char *field = malloc(endIndex + 1);
+            char *field = (char *) malloc(endIndex + 1);
             strncpy(field, startPtr, endIndex);
             field[endIndex] = '\0';
 
             const QueryField fieldObj = queryFieldFactory(prepareString(field));
-            fields = realloc(fields, sizeof(QueryField) * (fieldCount + 1));
+            fields = (QueryField *) realloc(fields, sizeof(QueryField) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
@@ -262,7 +262,7 @@ QueryField *findFields(char **line, Query *query) {
 }
 
 Condition *findConditions(char **line, Query *query) {
-    Condition *conditions = malloc(sizeof(Condition));
+    Condition *conditions = (Condition *) malloc(sizeof(Condition));
     *line = skipSpaces(*line);
 
     int inQuotes = 0;
@@ -282,13 +282,13 @@ Condition *findConditions(char **line, Query *query) {
 
         if (!inQuotes && (*line)[i] == ' ' || i == strLength) {
             const long long endIndex = *line + i - startPtr;
-            char *field = malloc(endIndex + 1);
+            char *field = (char *) malloc(endIndex + 1);
             strncpy(field, startPtr, endIndex);
             field[endIndex] = '\0';
 
             if (!strcmp(skipSpaces(prepareString(field)), "") == 0) {
                 const Condition condition = conditionFactory(prepareString(field));
-                conditions = realloc(conditions, sizeof(Condition) * (conditionsCount + 1));
+                conditions = (Condition *) realloc(conditions, sizeof(Condition) * (conditionsCount + 1));
                 conditions[conditionsCount++] = condition;
             }
 
@@ -341,7 +341,7 @@ Query *queryFactory(char *queryStr) {
         return NULL;
     }
 
-    Query *query = malloc(sizeof(Query));
+    Query *query = (Query *) malloc(sizeof(Query));
 
     if (!query) {
         return NULL;
@@ -358,7 +358,7 @@ Query *queryFactory(char *queryStr) {
         query->field_count = 0;
     }
 
-    Condition *conditions = findConditions(&queryStrCopy, query);
+    Condition *conditions = (Condition *) findConditions(&queryStrCopy, query);
     if (!conditions) {
         free(query);
         return NULL;

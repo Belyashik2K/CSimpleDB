@@ -66,7 +66,7 @@ int compareTimes(Time *self, char *other, ComparisonOptionEnum option) {
 
 char *timeToString(Time *self) {
     const int bufSize = strlen(self->field) + 50;
-    char *buffer = malloc(bufSize);
+    char *buffer = (char *) malloc(bufSize);
     if (!buffer) return NULL;
     snprintf(buffer, bufSize, "%s='%02d:%02d:%02d'", self->field, self->hour, self->minute, self->second);
     return buffer;
@@ -94,7 +94,7 @@ Time *timeFactory(const char *timeString, const char *field) {
     if (minute < 0 || minute > 59) return NULL;
     if (second < 0 || second > 59) return NULL;
 
-    Time *time = malloc(sizeof(Time));
+    Time *time = (Time *) malloc(sizeof(Time));
     if (time == NULL) return NULL;
 
     time->hour = (char) hour;

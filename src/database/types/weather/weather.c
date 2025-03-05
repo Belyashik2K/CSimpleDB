@@ -15,7 +15,7 @@ const char *weather_strings[] = {
 
 char *weatherToString(Weather *self) {
     const int bufSize = strlen(self->field) + strlen(weather_strings[self->value]) + 50;
-    char *buffer = malloc(bufSize);
+    char *buffer = (char *) malloc(bufSize);
     if (!buffer) return NULL;
     snprintf(buffer, bufSize, "%s='%s'", self->field, weather_strings[self->value]);
     return buffer;
@@ -213,7 +213,7 @@ Weather *weatherFactory(const char *weatherString, const char *field) {
 
     if (!valid) return NULL;
 
-    Weather *weather = malloc(sizeof(Weather));
+    Weather *weather = (Weather *) malloc(sizeof(Weather));
     if (!weather) return NULL;
 
     weather->value = (WeatherEnum) i;

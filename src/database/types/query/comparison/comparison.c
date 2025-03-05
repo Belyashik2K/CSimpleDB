@@ -27,7 +27,7 @@ Comparison *comparisonFactory(const char *comparisonStr) {
     const ComparisonOptionEnum comparisonEnum = comparisonFromString(comparisonStr);
     if (comparisonEnum == COMPARE_COUNT) return NULL;
 
-    Comparison *comparison = malloc(sizeof(Comparison));
+    Comparison *comparison = (Comparison *) malloc(sizeof(Comparison));
     if (!comparison) return NULL;
 
     comparison->cOperator = comparisonEnum;
