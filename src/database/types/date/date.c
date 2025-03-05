@@ -38,7 +38,7 @@ int is_valid_date(
 
 char *dateToString(Date *self) {
     const int bufSize = strlen(self->field) + 50;
-    char *buffer = malloc(bufSize);
+    char *buffer = (char *) malloc(bufSize);
     if (!buffer) return NULL;
     snprintf(buffer, bufSize, "%s='%02d.%02d.%02d'", self->field, self->day, self->month, self->year);
     return buffer;
@@ -124,7 +124,7 @@ Date *dateFactory(const char *dateString, const char *field) {
 
     if (!is_valid_date(day, month, year)) return NULL;
 
-    Date *date = malloc(sizeof(Date));
+    Date *date = (Date *) malloc(sizeof(Date));
     if (date == NULL) return NULL;
 
     date->day = (char) day;

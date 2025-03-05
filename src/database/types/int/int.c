@@ -61,7 +61,7 @@ int isInsideIntBounds(const char *str, const int isNegative) {
 
 char *intToString(CustomInt *self) {
     const int bufSize = strlen(self->field) + 50;
-    char *buffer = malloc(bufSize);
+    char *buffer = (char *) malloc(bufSize);
     if (!buffer) return NULL;
     snprintf(buffer, bufSize, "%s=%d", self->field, self->value);
     return buffer;
@@ -152,7 +152,7 @@ CustomInt *intFactory(char *intString, const char *field) {
         value = atoi(intString);
     }
 
-    CustomInt *customInt = malloc(sizeof(CustomInt));
+    CustomInt *customInt = (CustomInt *) malloc(sizeof(CustomInt));
     if (customInt == NULL) return NULL;
     customInt->value = value;
 
