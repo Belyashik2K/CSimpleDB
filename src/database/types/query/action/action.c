@@ -28,7 +28,7 @@ Action *actionFactory(char *actionString) {
         return NULL;
     }
 
-    Action *action = malloc(sizeof(Action));
+    Action *action = (Action *) malloc(sizeof(Action));
     if (!action) return NULL;
     action->value = actionEnum;
     return action;
