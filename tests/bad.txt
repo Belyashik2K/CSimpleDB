@@ -92,6 +92,7 @@ sort ,
 sort
 sort weather=='cloudy'
 
+select geo_id weather/in/['cloudy','rai,'df',n']
 
 select geo_id,geo_pos,mea_date,level,sunrise,weather,sundown,geo_id
 update sunrise='19:05:41' geo_id!=78
