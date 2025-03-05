@@ -209,7 +209,7 @@ QueryField *findFields(char **line, Query *query) {
             field[endIndex] = '\0';
 
             const QueryField fieldObj = queryFieldFactory(prepareString(field));
-            fields = realloc(fields, sizeof(QueryField) * (fieldCount + 1));
+            fields = (QueryField *) realloc(fields, sizeof(QueryField) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
@@ -230,7 +230,7 @@ QueryField *findFields(char **line, Query *query) {
             field[endIndex] = '\0';
 
             const QueryField fieldObj = queryFieldFactory(prepareString(field));
-            fields = realloc(fields, sizeof(QueryField) * (fieldCount + 1));
+            fields = (QueryField *) realloc(fields, sizeof(QueryField) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
@@ -288,7 +288,7 @@ Condition *findConditions(char **line, Query *query) {
 
             if (!strcmp(skipSpaces(prepareString(field)), "") == 0) {
                 const Condition condition = conditionFactory(prepareString(field));
-                conditions = realloc(conditions, sizeof(Condition) * (conditionsCount + 1));
+                conditions = (Condition *) realloc(conditions, sizeof(Condition) * (conditionsCount + 1));
                 conditions[conditionsCount++] = condition;
             }
 
