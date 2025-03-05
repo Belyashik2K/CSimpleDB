@@ -30,7 +30,7 @@ Comparison *comparisonFactory(const char *comparisonStr) {
     Comparison *comparison = malloc(sizeof(Comparison));
     if (!comparison) return NULL;
 
-    comparison->operator = comparisonEnum;
+    comparison->cOperator = comparisonEnum;
 
     return comparison;
 }

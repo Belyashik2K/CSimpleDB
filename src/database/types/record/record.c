@@ -195,7 +195,7 @@ static int processKey(char *key, char *value, Record *record, int seen[7]) {
 int isSatisfiedByCondition(Record *record, Condition *condition) {
     for (int i = 0; i < sizeof(keyMappings) / sizeof(keyMappings[0]); i++) {
         if (strcmp(condition->field, keyMappings[i].key) == 0) {
-            return keyMappings[i].compare(record, condition->value, condition->comparison->operator);
+            return keyMappings[i].compare(record, condition->value, condition->comparison->cOperator);
         }
     }
     return 0;

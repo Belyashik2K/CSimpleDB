@@ -16,7 +16,7 @@ typedef enum {
 extern const char *comparisonOptionStrings[];
 
 typedef struct {
-    ComparisonOptionEnum operator;
+    ComparisonOptionEnum cOperator;
 } Comparison;
 
 Comparison *comparisonFactory(const char *comparisonStr);
