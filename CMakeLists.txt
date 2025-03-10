@@ -36,4 +36,6 @@ add_executable(
         src/database/types/query/comparison/comparison.c
         src/database/types/query/order/sort.c
         src/database/types/query/order/sort.h
+        src/utils/mem_profiler/helper.c
+        src/utils/mem_profiler/helper.h
 )

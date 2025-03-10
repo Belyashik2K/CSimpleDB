@@ -6,6 +6,7 @@
 
 #include "../../database/types/query/action/action.h"
 #include "../../database/types/record/record.h"
+#include "../mem_profiler/helper.h"
 
 #define OUTPUT_FILE "../output.txt"
 #define MEMSTAT_FILE "../memstat.txt"
@@ -118,9 +119,11 @@ void writeMemstat() {
     FILE *file = fopen(MEMSTAT_FILE, "w");
     if (!file) return;
 
-    fprintf(file, "malloc:55\n");
-    fprintf(file, "realloc:7\n");
-    fprintf(file, "calloc:55\n");
-    fprintf(file, "free:110\n");
+    fprintf(file, "malloc:%d\n", mallocCount);
+    fprintf(file, "calloc:%d\n", callocCount);
+    fprintf(file, "realloc:%d\n", reallocCount);
+    fprintf(file, "strdup:%d\n", strdupCount);
+    fprintf(file, "free:%d\n", freeCount);
+
     fclose(file);
 }
