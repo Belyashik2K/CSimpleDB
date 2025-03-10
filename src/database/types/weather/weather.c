@@ -1,10 +1,11 @@
 #include <string.h>
-
-#include "../weather/weather.h"
-#include "../query/query.h"
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "../query/query.h"
+#include "../weather/weather.h"
+#include "../../../utils/mem_profiler/helper.h"
+
 
 const char *weather_strings[] = {
     "fair",
@@ -13,9 +14,15 @@ const char *weather_strings[] = {
     "snow"
 };
 
+void freeWeather(Weather *weather) {
+    if (!weather) return;
+    freeWrapper(weather->field);
+    freeWrapper(weather);
+}
+
 char *weatherToString(Weather *self) {
     const int bufSize = strlen(self->field) + strlen(weather_strings[self->value]) + 50;
-    char *buffer = (char *) malloc(bufSize);
+    char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
     snprintf(buffer, bufSize, "%s='%s'", self->field, weather_strings[self->value]);
     return buffer;
@@ -26,13 +33,14 @@ int isValueList(const char *input) {
 }
 
 int validateValuesInList(const char *input) {
-    char *temp = strdup(input);
+    char *tempPtr = strdupWrapper(input);
+    char *temp = tempPtr;
     if (!temp) {
         return 0;
     }
 
     if (strcmp(temp, "[]") == 0) {
-        free(temp);
+        freeWrapper(tempPtr);
         return 1;
     }
 
@@ -40,7 +48,7 @@ int validateValuesInList(const char *input) {
     char *end = strrchr(temp, ']');
 
     if (!start || !end || start > end) {
-        free(temp);
+        freeWrapper(tempPtr);
         return 0;
     }
 
@@ -49,7 +57,7 @@ int validateValuesInList(const char *input) {
 
     char *inside = trimWhitespace(start);
     if (strlen(inside) == 0) {
-        free(temp);
+        freeWrapper(tempPtr);
         return 0;
     }
 
@@ -74,19 +82,21 @@ int validateValuesInList(const char *input) {
         }
 
         if (!valid) {
-            free(temp);
+            freeWrapper(tempPtr);
             return 0;
         }
 
         token = strtok(NULL, ",");
     }
 
-    free(temp);
+    freeWrapper(tempPtr);
     return 1;
 }
 
 int findInList(Weather *self, char *other) {
-    char *temp = strdup(other);
+    char *tempPtr = strdup(other);
+    char *temp = tempPtr;
+
     if (!temp) {
         return 0;
     }
@@ -95,7 +105,7 @@ int findInList(Weather *self, char *other) {
     char *end = strrchr(temp, ']');
 
     if (!start || !end || start > end) {
-        free(temp);
+        freeWrapper(tempPtr);
         return 0;
     }
 
@@ -104,7 +114,7 @@ int findInList(Weather *self, char *other) {
 
     char *inside = trimWhitespace(start);
     if (strlen(inside) == 0) {
-        free(temp);
+        freeWrapper(tempPtr);
         return 0;
     }
 
@@ -120,20 +130,22 @@ int findInList(Weather *self, char *other) {
             len -= 2;
         }
 
-        if (!weatherFactory(token, self->field)) {
-            free(temp);
+        Weather *tempWeather = weatherFactory(token, self->field);
+        if (!tempWeather) {
+            freeWrapper(tempPtr);
             return -1;
         }
+        freeWeather(tempWeather);
 
         if (strcmp(token, weather_strings[self->value]) == 0) {
-            free(temp);
+            freeWrapper(tempPtr);
             return 1;
         }
 
         token = strtok(NULL, ",");
     }
 
-    free(temp);
+    freeWrapper(tempPtr);
     return 0;
 }
 
@@ -184,7 +196,6 @@ int updateWeatherField(Weather *self, char *newValue) {
 }
 
 Weather *weatherFactory(const char *weatherString, const char *field) {
-
     int valid = 0;
 
     if (isValueList(weatherString)) {
@@ -193,13 +204,11 @@ Weather *weatherFactory(const char *weatherString, const char *field) {
 
     int i = 0;
 
-    char *withoutQuotes = strdup(weatherString);
+    char *withoutQuotesPtr = strdupWrapper(weatherString);
+    char *withoutQuotes = withoutQuotesPtr;
     if (!withoutQuotes) return NULL;
 
-    if (
-        withoutQuotes[0] == '\'' &&
-        withoutQuotes[strlen(withoutQuotes) - 1] == '\''
-    ) {
+    if (withoutQuotes[0] == '\'' && withoutQuotes[strlen(withoutQuotes) - 1] == '\'') {
         withoutQuotes++;
         withoutQuotes[strlen(withoutQuotes) - 1] = '\0';
     }
@@ -211,17 +220,14 @@ Weather *weatherFactory(const char *weatherString, const char *field) {
         }
     }
 
+    freeWrapper(withoutQuotesPtr);
     if (!valid) return NULL;
 
-    Weather *weather = (Weather *) malloc(sizeof(Weather));
+    Weather *weather = (Weather *) mallocWrapper(sizeof(Weather));
     if (!weather) return NULL;
 
     weather->value = (WeatherEnum) i;
-    weather->field = strdup(field);
-    if (!weather->field) {
-        free(weather);
-        return NULL;
-    }
+    weather->field = strdupWrapper(field);
 
     weather->toString = weatherToString;
     weather->compare = compareWeathers;

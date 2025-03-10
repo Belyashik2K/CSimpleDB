@@ -8,10 +8,11 @@
 #include "database/types/int/int.h"
 #include "database/types/string/string.h"
 #include "database/types/time/time.h"
+#include "database/types/weather/weather.h"
 
 #include "utils/mem_profiler/helper.h"
 
-#define INPUT_FILE "../tests/uniq.txt"
+#define INPUT_FILE "../tests/select.txt"
 
 int main(void) {
     prepareOutputFile();
@@ -61,7 +62,15 @@ int main(void) {
     //     printf("Time factory failed\n");
     //     return 1;
     // }
-
+    //
+    // freeTime(time);
+    //
+    // Weather *weather = weatherFactory("'fair'", "weather");
+    // if (!weather) {
+    //     printf("Weather factory failed\n");
+    //     return 1;
+    // }
+    // freeWeather(weather);
 
     Database *database = initializeDatabase();
     if (!database) {
