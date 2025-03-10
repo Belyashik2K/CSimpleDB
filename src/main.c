@@ -3,12 +3,20 @@
 #include "database/initializer.h"
 #include "utils/parser/file_parser.h"
 #include "utils/writer/file_writer.h"
+#include "database/types/date/date.h"
 
 #define INPUT_FILE "../tests/update.txt"
 
 int main(void) {
 
     prepareOutputFile();
+
+    // Date *date = dateFactory("'01.01.2021'", "date");
+    // if (!date) {
+    //     printf("Date factory failed\n");
+    //     return 1;
+    // }
+    // freeDate(date);
 
     Database *database = initializeDatabase();
     if (!database) {

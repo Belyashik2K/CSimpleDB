@@ -4,7 +4,10 @@
 
 #ifndef HELPER_H
 #define HELPER_H
+
 #include <stddef.h>
+
+#define freeWrapper(ptr) _freeWrapper((void **)&(ptr))
 
 extern int mallocCount;
 extern int callocCount;
@@ -20,7 +23,7 @@ void *reallocWrapper(void *ptr, size_t size);
 
 char *strdupWrapper(const char *str);
 
-void freeWrapper(void **ptr);
+void _freeWrapper(void **ptr);
 
 
 #endif //HELPER_H

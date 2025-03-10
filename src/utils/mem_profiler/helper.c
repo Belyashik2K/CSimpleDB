@@ -32,7 +32,7 @@ char *strdupWrapper(const char *str) {
     return strdup(str);
 }
 
-void freeWrapper(void **ptr) {
+void _freeWrapper(void **ptr) {
     if (ptr == NULL || *ptr == NULL) return;
 
     freeCount++;

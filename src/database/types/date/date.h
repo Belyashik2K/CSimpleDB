@@ -15,5 +15,6 @@ typedef struct Date {
 } Date;
 
 Date *dateFactory(const char *dateString, const char *field);
+void freeDate(Date *date);
 
 #endif
