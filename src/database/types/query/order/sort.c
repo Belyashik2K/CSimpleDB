@@ -4,10 +4,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../../../../utils/mem_profiler/helper.h"
+
 const char *sortStrings[] = {
     "asc",
     "desc"
 };
+
+void freeSort(Sort *sort) {
+    if (!sort) return;
+    freeWrapper(sort);
+}
 
 SortEnum sortFromString(const char *str) {
     for (int i = 0; i < SORT_COUNT; i++) {
@@ -23,7 +30,7 @@ Sort *sortFactory(char *sortString) {
     const SortEnum sortEnum = sortFromString(sortString);
     if (sortEnum == SORT_COUNT) return NULL;
 
-    Sort *sort = (Sort *) malloc(sizeof(Sort));
+    Sort *sort = (Sort *) mallocWrapper(sizeof(Sort));
     if (!sort) return NULL;
 
     sort->value = sortEnum;

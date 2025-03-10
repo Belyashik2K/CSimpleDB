@@ -16,5 +16,6 @@ typedef struct Sort {
 } Sort;
 
 Sort *sortFactory(char *sortString);
+void freeSort(Sort *sort);
 
 #endif //SORT_H
