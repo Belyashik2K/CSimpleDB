@@ -250,8 +250,8 @@ Record *recordFactory(Query *query) {
 
     int seen[7] = {0};
     for (int i = 0; i < query->field_count; i++) {
-        const QueryField field = query->fields[i];
-        if (!processKey(field.field, field.value, record, seen)) {
+        QueryField *field = query->fields[i];
+        if (!processKey(field->field, field->value, record, seen)) {
             freeRecord(record);
             return NULL;
         }

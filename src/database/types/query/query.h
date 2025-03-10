@@ -11,7 +11,7 @@ typedef struct {
 
 typedef struct {
     Action action;
-    QueryField *fields;
+    QueryField **fields;
     int field_count;
     Condition **conditions;
     int condition_count;

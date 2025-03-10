@@ -12,7 +12,7 @@
 
 #include "utils/mem_profiler/helper.h"
 
-#define INPUT_FILE "../tests/select.txt"
+#define INPUT_FILE "../tests/ibks_1.txt"
 
 int main(void) {
     prepareOutputFile();

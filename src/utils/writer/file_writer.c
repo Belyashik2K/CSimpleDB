@@ -30,8 +30,8 @@ char *prepareSelectResult(Record *record, Query *query) {
         return NULL;
     }
     for (int i = 0; i < query->field_count; i++) {
-        const QueryField field = query->fields[i];
-        char *fieldString = getFieldStringRepresentation(field.field, record);
+        QueryField *field = query->fields[i];
+        char *fieldString = getFieldStringRepresentation(field->field, record);
 
         if (!fieldString) {
             free(result);

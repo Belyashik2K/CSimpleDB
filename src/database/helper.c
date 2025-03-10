@@ -136,8 +136,8 @@ int makeUpdateQuery(Database *db, Query *query) {
         }
 
         for (int i = 0; i < query->field_count; i++) {
-            QueryField field = query->fields[i];
-            updateRecord(current->data, &field);
+            QueryField *field = query->fields[i];
+            updateRecord(current->data, field);
         }
         updatedRecords++;
         current = current->next;
@@ -163,9 +163,9 @@ int makeUniqQuery(Database *db, Query *query) {
             int fieldsMatch = 1;
 
             for (int i = 0; i < query->field_count; i++) {
-                const QueryField field = query->fields[i];
-                const char *currentValue = getFieldStringRepresentation(field.field, current->data);
-                const char *runnerValue = getFieldStringRepresentation(field.field, runner->data);
+                QueryField *field = query->fields[i];
+                const char *currentValue = getFieldStringRepresentation(field->field, current->data);
+                const char *runnerValue = getFieldStringRepresentation(field->field, runner->data);
 
                 if (strcmp(currentValue, runnerValue) != 0) {
                     fieldsMatch = 0;
@@ -216,9 +216,9 @@ RecordNode *merge(RecordNode *left, RecordNode *right, Query *query) {
         int compareResult = 0;
 
         for (int i = 0; i < query->field_count && compareResult == 0; i++) {
-            QueryField field = query->fields[i];
-            ComparisonOptionEnum option = strcmp(query->fields[i].value, "asc") == 0 ? GREATER : LESS;
-            compareResult = compareTwoRecords(left->data, right->data, option, &field);
+            QueryField *field = query->fields[i];
+            ComparisonOptionEnum option = strcmp(query->fields[i]->value, "asc") == 0 ? GREATER : LESS;
+            compareResult = compareTwoRecords(left->data, right->data, option, field);
         }
 
         if (compareResult <= 0) {
@@ -286,19 +286,19 @@ int validateFieldsAndConditions(Query *query) {
     if (!query) return 0;
 
     for (int i = 0; i < query->field_count; i++) {
-        const QueryField field = query->fields[i];
+        QueryField *field = query->fields[i];
 
-        if (!validateKey(field.field)) {
-            printf("Invalid field: %s\n", field.field);
+        if (!validateKey(field->field)) {
+            printf("Invalid field: %s\n", field->field);
             return 0;
         }
-        if (strcmp(field.field, "weather") == 0 && query->action.value == SORT) {
+        if (strcmp(field->field, "weather") == 0 && query->action.value == SORT) {
             return 0;
         }
 
         if (query->action.value != SELECT && query->action.value != UNIQUE && query->action.value != SORT) {
-            if (!validateValue(field.field, field.value)) {
-                printf("Invalid value for field: %s\n", field.field);
+            if (!validateValue(field->field, field->value)) {
+                printf("Invalid value for field: %s\n", field->field);
                 return 0;
             }
         }

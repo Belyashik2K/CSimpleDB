@@ -11,17 +11,43 @@
 #include "../../../utils/mem_profiler/helper.h"
 
 void freeCondition(Condition *condition) {
+    if (!condition) {
+        return;
+    }
     freeWrapper(condition->field);
     freeWrapper(condition->comparison);
     freeWrapper(condition->value);
 }
 
 void freeConditions(Condition **conditions, int conditionCount) {
+    if (!conditions) {
+        return;
+    }
     for (int i = 0; i < conditionCount; i++) {
         Condition *condition = conditions[i];
         freeCondition(condition);
     }
     freeWrapper(conditions);
+}
+
+void freeField(QueryField *field) {
+    if (!field) {
+        return;
+    }
+    freeWrapper(field->field);
+    freeWrapper(field->value);
+}
+
+void freeFields(QueryField **fields, int fieldCount) {
+    if (!fields) {
+        return;
+    }
+    for (int i = 0; i < fieldCount; i++) {
+        QueryField *field = fields[i];
+        freeWrapper(field->field);
+        freeWrapper(field->value);
+    }
+    freeWrapper(fields);
 }
 
 int checkForScreeningInQuery(const char *line, const int index) {
@@ -73,11 +99,12 @@ char *trimWhitespace(char *str) {
     return str;
 }
 
-QueryField queryFieldFactory(char *fieldString) {
-    QueryField queryField = {NULL, NULL};
+QueryField *queryFieldFactory(char *fieldString) {
+    QueryField *field = (QueryField *) mallocWrapper(sizeof(QueryField));
+    field->value = NULL;
+
     int inQuotes = 0;
     char quoteChar = 0;
-
     char *pos = fieldString;
     char *equalSign = NULL;
 
@@ -98,32 +125,35 @@ QueryField queryFieldFactory(char *fieldString) {
     }
 
     if (!equalSign) {
-        queryField.field = strdup(trimWhitespace(fieldString));
-        return queryField;
+        field->field = strdupWrapper(trimWhitespace(fieldString));
+        return field;
     }
 
-    int fieldLen = equalSign - fieldString;
-    char *fieldPart = (char *) malloc(fieldLen + 1);
+    const int fieldLen = equalSign - fieldString;
+    char *fieldPart = (char *) mallocWrapper(fieldLen + 1);
     if (!fieldPart) {
-        return queryField;
+        freeField(field);
+        return NULL;
     }
     strncpy(fieldPart, fieldString, fieldLen);
     fieldPart[fieldLen] = '\0';
 
+
     int valueLen = strlen(equalSign + 1);
-    char *valuePart = (char *) malloc(valueLen + 1);
+    char *valuePart = (char *) mallocWrapper(valueLen + 1);
     if (!valuePart) {
-        free(fieldPart);
-        return queryField;
+        freeField(field);
+        freeWrapper(fieldPart);
+        return NULL;
     }
     strcpy(valuePart, equalSign + 1);
 
-    queryField.field = strdup(trimWhitespace(fieldPart));
-    queryField.value = strdup(trimWhitespace(valuePart));
+    field->field = strdupWrapper(trimWhitespace(fieldPart));
+    field->value = strdupWrapper(trimWhitespace(valuePart));
 
-    free(fieldPart);
-    free(valuePart);
-    return queryField;
+    freeWrapper(fieldPart);
+    freeWrapper(valuePart);
+    return field;
 }
 
 Condition *conditionFactory(char *conditionString) {
@@ -203,8 +233,8 @@ char *findAction(char **line) {
     return action;
 }
 
-QueryField *findFields(char **line, Query *query) {
-    QueryField *fields = (QueryField *) malloc(sizeof(QueryField));
+int findFields(char **line, Query *query) {
+    QueryField **fields = (QueryField **) malloc(sizeof(QueryField *));
     *line = skipSpaces(*line);
 
     int inQuotes = 0;
@@ -215,8 +245,8 @@ QueryField *findFields(char **line, Query *query) {
 
     if (strLength == 0) {
         query->field_count = 0;
-        query->fields = fields;
-        return fields;
+        query->fields = NULL;
+        freeFields(fields, fieldCount);
     }
 
     const char *startPtr = *line;
@@ -225,44 +255,58 @@ QueryField *findFields(char **line, Query *query) {
 
         if (!inQuotes && (*line)[i] == ',') {
             const long long endIndex = *line + i - startPtr;
-            char *field = (char *) malloc(endIndex + 1);
+            char *field = (char *) mallocWrapper(endIndex + 1);
             strncpy(field, startPtr, endIndex);
             field[endIndex] = '\0';
 
-            const QueryField fieldObj = queryFieldFactory(prepareString(field));
-            fields = (QueryField *) realloc(fields, sizeof(QueryField) * (fieldCount + 1));
+            QueryField *fieldObj = queryFieldFactory(prepareString(field));
+            if (!fieldObj) {
+                freeWrapper(field);
+                freeFields(fields, fieldCount);
+                return 0;
+            }
+
+            fields = (QueryField **) reallocWrapper(fields, sizeof(QueryField *) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
-                if (!sortFactory(fields[fieldCount - 1].value)) {
-                    free(fields);
-                    return NULL;
+                if (!sortFactory(fields[fieldCount - 1]->value)) {
+                    freeWrapper(field);
+                    freeFields(fields, fieldCount);
+                    return 0;
                 }
             }
 
-            free(field);
+            freeWrapper(field);
             startPtr = *line + i + 1;
         }
 
         if (i == strLength || (*line)[i] == ' ' && !inQuotes) {
             const long long endIndex = *line + i - startPtr;
-            char *field = (char *) malloc(endIndex + 1);
+            char *field = (char *) mallocWrapper(endIndex + 1);
             strncpy(field, startPtr, endIndex);
             field[endIndex] = '\0';
 
-            const QueryField fieldObj = queryFieldFactory(prepareString(field));
-            fields = (QueryField *) realloc(fields, sizeof(QueryField) * (fieldCount + 1));
+            QueryField *fieldObj = queryFieldFactory(prepareString(field));
+            if (!fieldObj) {
+                freeWrapper(field);
+                freeFields(fields, fieldCount);
+                return 0;
+            }
+
+            fields = (QueryField **) reallocWrapper(fields, sizeof(QueryField *) * (fieldCount + 1));
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
-                if (!sortFactory(fields[fieldCount - 1].value)) {
-                    free(fields);
-                    return NULL;
+                if (!sortFactory(fields[fieldCount - 1]->value)) {
+                    freeWrapper(field);
+                    freeFields(fields, fieldCount);
+                    return 0;
                 }
             }
 
             lastIndexOfField = i;
-            free(field);
+            freeWrapper(field);
             break;
         }
 
@@ -273,13 +317,13 @@ QueryField *findFields(char **line, Query *query) {
     *line += lastIndexOfField;
 
     if (fieldCount == 0) {
-        free(fields);
-        return NULL;
+        freeFields(fields, fieldCount);
+        return 0;
     }
 
     query->fields = fields;
     query->field_count = fieldCount;
-    return fields;
+    return 1;
 }
 
 int findConditions(char **line, Query *query) {
@@ -351,10 +395,10 @@ Query *queryFactory(char *queryStr) {
     query->action = *action;
 
     if (query->action.value != DELETE) {
-        QueryField *fields = findFields(&queryStrCopy, query);
-        if (!fields) {
-            free(query);
-            return NULL;
+        int isFieldsFound = findFields(&queryStrCopy, query);
+        if (!isFieldsFound) {
+            // free(query);
+            // return NULL;
         }
     } else {
         query->field_count = 0;
@@ -381,12 +425,12 @@ Query *queryFactory(char *queryStr) {
     if (query->field_count != 0) {
         for (int i = 0; i < query->field_count; i++) {
             if (
-                query->fields[i].value && query->action.value == SELECT ||
-                query->fields[i].value && query->action.value == UNIQUE ||
-                query->fields[i].value && query->action.value == DELETE ||
-                !query->fields[i].value && query->action.value == UPDATE ||
-                !query->fields[i].value && query->action.value == INSERT ||
-                !query->fields[i].value && query->action.value == SORT
+                query->fields[i]->value && query->action.value == SELECT ||
+                query->fields[i]->value && query->action.value == UNIQUE ||
+                query->fields[i]->value && query->action.value == DELETE ||
+                !query->fields[i]->value && query->action.value == UPDATE ||
+                !query->fields[i]->value && query->action.value == INSERT ||
+                !query->fields[i]->value && query->action.value == SORT
             ) {
                 free(query);
                 return NULL;
