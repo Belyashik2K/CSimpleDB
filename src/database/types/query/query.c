@@ -8,6 +8,22 @@
 
 #include <string.h>
 
+#include "../../../utils/mem_profiler/helper.h"
+
+void freeCondition(Condition *condition) {
+    freeWrapper(condition->field);
+    freeWrapper(condition->comparison);
+    freeWrapper(condition->value);
+}
+
+void freeConditions(Condition **conditions, int conditionCount) {
+    for (int i = 0; i < conditionCount; i++) {
+        Condition *condition = conditions[i];
+        freeCondition(condition);
+    }
+    freeWrapper(conditions);
+}
+
 int checkForScreeningInQuery(const char *line, const int index) {
     return index > 0 && line[index - 1] == '\\' && line[index - 2] != '\\';
 }
@@ -110,11 +126,11 @@ QueryField queryFieldFactory(char *fieldString) {
     return queryField;
 }
 
-Condition conditionFactory(char *conditionString) {
-    Condition condition;
-    condition.field = NULL;
-    condition.comparison = NULL;
-    condition.value = NULL;
+Condition *conditionFactory(char *conditionString) {
+    Condition *condition = (Condition *) malloc(sizeof(Condition));
+    if (!condition) {
+        return NULL;
+    }
 
     char *opPos = NULL;
     const char *selectedOp = NULL;
@@ -126,33 +142,38 @@ Condition conditionFactory(char *conditionString) {
             break;
         }
     }
+
     if (selectedOp == NULL) {
-        return condition;
+        freeCondition(condition);
+        return NULL;
     }
 
     const int fieldLen = opPos - conditionString;
-    char *fieldPart = (char *) malloc(fieldLen + 1);
-    if (!fieldPart)
-        return condition;
+    char *fieldPart = (char *) mallocWrapper(fieldLen + 1);
+    if (!fieldPart) {
+        freeCondition(condition);
+        return NULL;
+    }
     strncpy(fieldPart, conditionString, fieldLen);
     fieldPart[fieldLen] = '\0';
 
     const int opLen = strlen(selectedOp);
-    char *valuePart = strdup(opPos + opLen);
+    char *valuePart = strdupWrapper(opPos + opLen);
     if (!valuePart) {
-        free(fieldPart);
-        return condition;
+        freeWrapper(fieldPart);
+        freeCondition(condition);
+        return NULL;
     }
 
     const char *trimmedField = trimWhitespace(fieldPart);
     const char *trimmedValue = trimWhitespace(valuePart);
 
-    condition.field = strdup(trimmedField);
-    condition.comparison = comparisonFactory(selectedOp);
-    condition.value = strdup(trimmedValue);
+    condition->field = strdupWrapper(trimmedField);
+    condition->comparison = comparisonFactory(selectedOp);
+    condition->value = strdupWrapper(trimmedValue);
 
-    free(fieldPart);
-    free(valuePart);
+    freeWrapper(fieldPart);
+    freeWrapper(valuePart);
     return condition;
 }
 
@@ -261,8 +282,8 @@ QueryField *findFields(char **line, Query *query) {
     return fields;
 }
 
-Condition *findConditions(char **line, Query *query) {
-    Condition *conditions = (Condition *) malloc(sizeof(Condition));
+int findConditions(char **line, Query *query) {
+    Condition **conditions = (Condition **) malloc(sizeof(Condition *));
     *line = skipSpaces(*line);
 
     int inQuotes = 0;
@@ -272,8 +293,9 @@ Condition *findConditions(char **line, Query *query) {
 
     if (strLength == 0) {
         query->condition_count = 0;
-        query->conditions = conditions;
-        return conditions;
+        query->conditions = NULL;
+        freeConditions(conditions, conditionsCount);
+        return 0;
     }
 
     char *startPtr = *line;
@@ -282,13 +304,13 @@ Condition *findConditions(char **line, Query *query) {
 
         if (!inQuotes && (*line)[i] == ' ' || i == strLength) {
             const long long endIndex = *line + i - startPtr;
-            char *field = (char *) malloc(endIndex + 1);
+            char *field = (char *) mallocWrapper(endIndex + 1);
             strncpy(field, startPtr, endIndex);
             field[endIndex] = '\0';
 
             if (!strcmp(skipSpaces(prepareString(field)), "") == 0) {
-                const Condition condition = conditionFactory(prepareString(field));
-                conditions = (Condition *) realloc(conditions, sizeof(Condition) * (conditionsCount + 1));
+                Condition *condition = conditionFactory(prepareString(field));
+                conditions = (Condition **) reallocWrapper(conditions, sizeof(Condition *) * (conditionsCount + 1));
                 conditions[conditionsCount++] = condition;
             }
 
@@ -303,32 +325,12 @@ Condition *findConditions(char **line, Query *query) {
     query->condition_count = conditionsCount;
     query->conditions = conditions;
 
-    return conditions;
+    return 1;
 }
 
-// int validateFields(QueryField *field, Query *query) {
-//     if (query->action.value == SELECT && field->value) {
-//         return 0;
-//     }
-//
-//     if (query->action.value == INSERT && !field->value) {
-//         return 0;
-//     }
-//
-//     if (query->action.value == DELETE && field->field) {
-//         return 0;
-//     }
-//
-//     if (query->action.value == UPDATE && !field->value) {
-//         return 0;
-//     }
-//
-//     return 1;
-// }
-
-
 Query *queryFactory(char *queryStr) {
-    char *queryStrCopy = strdup(queryStr);
+    char *queryStrPtr = strdup(queryStr);
+    char *queryStrCopy = queryStrPtr;
     if (!queryStrCopy)
         return NULL;
 
@@ -358,10 +360,9 @@ Query *queryFactory(char *queryStr) {
         query->field_count = 0;
     }
 
-    Condition *conditions = (Condition *) findConditions(&queryStrCopy, query);
-    if (!conditions) {
-        free(query);
-        return NULL;
+    const int isConditionsFound = findConditions(&queryStrCopy, query);
+    if (!isConditionsFound) {
+        // Check for actions that require conditions
     }
 
     if (
@@ -395,7 +396,7 @@ Query *queryFactory(char *queryStr) {
 
     if (query->condition_count != 0) {
         if (query->action.value == DELETE) {
-            if (query->condition_count >= 1 && !query->conditions[0].field && !query->conditions[0].value) {
+            if (query->condition_count >= 1 && !query->conditions[0]->field && !query->conditions[0]->value) {
                 query->condition_count = 0;
                 free(query->conditions);
                 free(query);

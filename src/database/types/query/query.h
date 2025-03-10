@@ -13,7 +13,7 @@ typedef struct {
     Action action;
     QueryField *fields;
     int field_count;
-    Condition *conditions;
+    Condition **conditions;
     int condition_count;
 } Query;
 

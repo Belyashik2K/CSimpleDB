@@ -39,7 +39,7 @@ int checkIfRecordSatisfiesConditions(Record *record, Query *query) {
     if (!record || !query) return 0;
 
     for (int i = 0; i < query->condition_count; i++) {
-        if (!isSatisfiedByCondition(record, &query->conditions[i])) {
+        if (!isSatisfiedByCondition(record, query->conditions[i])) {
             return 0;
         }
     }
@@ -305,7 +305,7 @@ int validateFieldsAndConditions(Query *query) {
     }
 
     for (int i = 0; i < query->condition_count; i++) {
-        const Condition condition = query->conditions[i];
+        const Condition condition = *query->conditions[i];
 
         if (!validateKey(condition.field)) {
             printf("Invalid condition: %s\n", condition.field);
