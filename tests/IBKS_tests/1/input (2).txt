@@ -1,0 +1,21 @@
+insert   level=0015,weather='fair',geo_id=551,sundown='19:05:41',geo_pos="Petrov",sunrise='23:59:59',mea_date='01.02.2017'
+insert  sundown='18:42:00',level=-10,geo_pos="Luzi\"buzi\"",mea_date='01.02.2017',sunrise='18:40:51',weather='cloudy',geo_id=0
+insert mea_date='15.06.2016',geo_id=-19,level=-00000000000051,geo_pos="Luzi-buzi",weather='fair',sunrise='18:40:52',sundown='0:1:2'
+insert level=0,geo_id=551,sundown='23:5:59',weather='rain',geo_pos="Luzi=buzi=",mea_date='20.12.2016',sunrise='18:40:51'
+insert    sunrise='19:05:41',mea_date='15.06.2016',level=15,geo_pos="Luzi \"bu zi\"  ",geo_id=15,weather='cloudy',sundown='18:41:50'
+insert     sunrise='18:40:51',sundown='19:07:55',geo_pos="Luzi\"buzi\"",weather='fair',mea_date='01.03.2017',level=004,geo_id=00000000000657
+insert     geo_id=0,sundown='1:1:1',mea_date='15.06.2016',sunrise='19:07:55',level=18,weather='fair',geo_pos="Luzi\\buzi"
+insert   geo_pos="Luzi Buzi\\\\\\\\",mea_date='29.02.1904',geo_id=-00000000000099,sundown='19:07:43',sunrise='23:5:59',level=-2147483648,weather='rain'
+insert    level=-19,geo_pos="Bobrovsky",sundown='18:42:00',weather='fair',mea_date='01.02.2017',sunrise='19:07:55',geo_id=-10
+insert    sundown='18:42:00',weather='cloudy',sunrise='19:07:03',geo_pos="Luzi  'buzi'  ",geo_id=00000000000657,mea_date='15.06.2016',level=18
+insert geo_id=0016,weather='fair',sunrise='0:1:2',geo_pos="Penkin",sundown='19:07:03',level=041,mea_date='8.2.2017'
+insert   level=15,sundown='00:00:0',mea_date='01.02.2017',sunrise='23:5:59',geo_pos="Luzi buzi",geo_id=-00000000000051,weather='cloudy'
+insert     geo_pos="Albin",weather='snow',mea_date='31.12.2016',geo_id=0,level=15,sunrise='19:07:43',sundown='18:42:00'
+insert   mea_date='20.03.2016',sundown='18:41:50',level=004,weather='fair',geo_pos="Bobrov",geo_id=57,sunrise='23:59:59'
+insert  sunrise='1:1:1',mea_date='29.02.2000',level=-00000000000051,geo_pos="Luzi\"buzi\"",weather='snow',sundown='18:42:00',geo_id=18
+delete  geo_pos<="Luzi buzi"
+select weather,geo_id,sundown,mea_date,sunrise,level,geo_pos
+delete     mea_date<'14.04.2016'     weather!='rain'
+select geo_pos,weather,geo_id,sundown,sunrise,mea_date,level
+delete    geo_id==-00000000000051    geo_pos=="Luzi Buzi\\\\\\\\"    level==0016
+select sundown,geo_id,mea_date,weather,level,sunrise,geo_pos
