@@ -3,6 +3,8 @@
 
 #include "../action/action.h"
 
+#include "../../../../utils/mem_profiler/helper.h"
+
 const char *actionStrings[] = {
     "insert",
     "delete",
@@ -11,6 +13,11 @@ const char *actionStrings[] = {
     "uniq",
     "sort"
 };
+
+void freeAction(Action *action) {
+    if (!action) return;
+    freeWrapper(action);
+}
 
 ActionEnum actionFromString(char *str) {
     str[strcspn(str, "\n")] = 0;
@@ -28,7 +35,7 @@ Action *actionFactory(char *actionString) {
         return NULL;
     }
 
-    Action *action = (Action *) malloc(sizeof(Action));
+    Action *action = (Action *) mallocWrapper(sizeof(Action));
     if (!action) return NULL;
     action->value = actionEnum;
     return action;

@@ -16,5 +16,6 @@ typedef struct Action {
 } Action;
 
 Action *actionFactory(char *actionString);
+void freeAction(Action *action);
 
 #endif
