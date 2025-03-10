@@ -1,10 +1,17 @@
 #include <stdlib.h>
 #include <string.h>
-
-#include "../string/string.h"
-
 #include <stdio.h>
 
+#include "../string/string.h"
+#include "../../../utils/mem_profiler/helper.h"
+
+void freeString(CustomString *customString) {
+    if (!customString) return;
+
+    freeWrapper(customString->field);
+    freeWrapper(customString->value);
+    freeWrapper(customString);
+}
 
 int checkForScreening(const char previous, const int index) {
     return index < 0 ? 0 : previous == (char) 92 ? 1 : 0;
@@ -45,7 +52,7 @@ int equalString(CustomString *self, char *other) {
     if (!otherString) return 0;
 
     int result = strcmp(self->value, otherString->value) == 0;
-    free(otherString);
+    freeString(otherString);
 
     return result;
 }
@@ -59,7 +66,7 @@ int lessString(CustomString *self, char *other) {
     if (!otherString) return 0;
 
     int result = strcmp(self->value, otherString->value) < 0;
-    free(otherString);
+    freeString(otherString);
 
     return result;
 }
@@ -71,7 +78,7 @@ int greaterString(CustomString *self, char *other) {
     }
 
     int result = strcmp(self->value, otherString->value) > 0;
-    free(otherString);
+    freeString(otherString);
 
     return result;
 }
@@ -104,10 +111,12 @@ int compareStrings(CustomString *self, char *other, ComparisonOptionEnum option)
 }
 
 int updateString(CustomString *self, char *newValue) {
-    free(self->value);
-    const CustomString *newString = stringFactory(newValue, self->field);
+    CustomString *newString = stringFactory(newValue, self->field);
     if (!newString) return 0;
-    self->value = newString->value;
+
+    freeWrapper(self->value);
+    self->value = strdupWrapper(newString->value);
+    freeString(newString);
     return 1;
 }
 
@@ -125,10 +134,10 @@ CustomString *stringFactory(char *string, const char *field) {
         }
     }
 
-    CustomString *customString = (CustomString *) malloc(sizeof(CustomString));
+    CustomString *customString = (CustomString *) mallocWrapper(sizeof(CustomString));
     if (customString == NULL) return NULL;
 
-    customString->value = (char *) malloc(strlen(string) + 1);
+    customString->value = (char *) mallocWrapper(strlen(string) + 1);
     if (customString->value == NULL) {
         free(customString);
         return NULL;
@@ -138,7 +147,7 @@ CustomString *stringFactory(char *string, const char *field) {
     strcpy(customString->value, string + 1);
     customString->value[strlen(customString->value) - 1] = '\0';
 
-    customString->field = strdup(field);
+    customString->field = strdupWrapper(field);
     if (customString->field == NULL) {
         free(customString->value);
         free(customString);

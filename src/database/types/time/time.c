@@ -3,12 +3,25 @@
 #include <string.h>
 
 #include "../time/time.h"
+#include "../../../utils/mem_profiler/helper.h"
+
+void freeTime(Time *time) {
+    if (!time) return;
+
+    freeWrapper(time->field);
+    freeWrapper(time);
+}
 
 int equalTime(Time *self, char *other) {
     Time *otherTime = timeFactory(other, self->field);
     if (!otherTime) return 0;
 
-    return self->hour == otherTime->hour && self->minute == otherTime->minute && self->second == otherTime->second;
+    int result = self->hour == otherTime->hour &&
+                 self->minute == otherTime->minute &&
+                 self->second == otherTime->second;
+    freeTime(otherTime);
+
+    return result;
 }
 
 int notEqualTime(Time *self, char *other) {
@@ -21,16 +34,16 @@ int lessTime(Time *self, char *other) {
         return 0;
     }
 
-    if (self->hour < otherTime->hour) return 1;
-    if (self->hour > otherTime->hour) return 0;
+    int result = 0;
+    if (self->hour != otherTime->hour)
+        result = self->hour < otherTime->hour;
+    else if (self->minute != otherTime->minute)
+        result = self->minute < otherTime->minute;
+    else
+        result = self->second < otherTime->second;
+    freeTime(otherTime);
 
-    if (self->minute < otherTime->minute) return 1;
-    if (self->minute > otherTime->minute) return 0;
-
-    if (self->second < otherTime->second) return 1;
-    if (self->second > otherTime->second) return 0;
-
-    return 0;
+    return result;
 }
 
 int greaterTime(Time *self, char *other) {
@@ -66,7 +79,7 @@ int compareTimes(Time *self, char *other, ComparisonOptionEnum option) {
 
 char *timeToString(Time *self) {
     const int bufSize = strlen(self->field) + 50;
-    char *buffer = (char *) malloc(bufSize);
+    char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
     snprintf(buffer, bufSize, "%s='%02d:%02d:%02d'", self->field, self->hour, self->minute, self->second);
     return buffer;
@@ -80,6 +93,8 @@ int updateTime(Time *self, char *newValue) {
     self->minute = newTime->minute;
     self->second = newTime->second;
 
+    freeTime(newTime);
+
     return 1;
 }
 
@@ -92,20 +107,17 @@ Time *timeFactory(const char *timeString, const char *field) {
 
     if (hour < 0 || hour > 23) return NULL;
     if (minute < 0 || minute > 59) return NULL;
+    if (minute < 0 || minute > 59) return NULL;
     if (second < 0 || second > 59) return NULL;
 
-    Time *time = (Time *) malloc(sizeof(Time));
+    Time *time = (Time *) mallocWrapper(sizeof(Time));
     if (time == NULL) return NULL;
 
     time->hour = (char) hour;
     time->minute = (char) minute;
     time->second = (char) second;
 
-    time->field = strdup(field);
-    if (!time->field) {
-        free(time);
-        return NULL;
-    }
+    time->field = strdupWrapper(field);
 
     time->toString = timeToString;
     time->compare = compareTimes;

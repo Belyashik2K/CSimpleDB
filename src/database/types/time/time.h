@@ -15,5 +15,6 @@ typedef struct Time {
 } Time;
 
 Time *timeFactory(const char *timeString, const char *field);
+void freeTime(Time *time);
 
 #endif
