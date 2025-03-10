@@ -3,12 +3,14 @@
 #include "database/initializer.h"
 #include "utils/parser/file_parser.h"
 #include "utils/writer/file_writer.h"
+
 #include "database/types/date/date.h"
+#include "database/types/int/int.h"
+#include "utils/mem_profiler/helper.h"
 
 #define INPUT_FILE "../tests/update.txt"
 
 int main(void) {
-
     prepareOutputFile();
 
     // Date *date = dateFactory("'01.01.2021'", "date");
@@ -17,6 +19,14 @@ int main(void) {
     //     return 1;
     // }
     // freeDate(date);
+    //
+    // CustomInt *customInt = intFactory("123", "int");
+    // freeWrapper(customInt->field);
+    // if (!customInt) {
+    //     printf("Int factory failed\n");
+    //     return 1;
+    // }
+    // freeInt(customInt);
 
     Database *database = initializeDatabase();
     if (!database) {
