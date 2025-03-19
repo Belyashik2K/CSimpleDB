@@ -122,7 +122,7 @@ int updateDate(Date *self, char *newValue) {
     self->month = newDate->month;
     self->year = newDate->year;
 
-    freeWrapper(newDate);
+    freeDate(newDate);
     return 1;
 }
 
@@ -146,7 +146,7 @@ Date *dateFactory(const char *dateString, const char *field) {
 
     date->field = strdupWrapper(field);
     if (!date->field) {
-        free(date);
+        freeDate(date);
         return NULL;
     }
 

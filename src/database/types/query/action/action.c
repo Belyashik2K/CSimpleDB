@@ -31,7 +31,7 @@ ActionEnum actionFromString(char *str) {
 
 Action *actionFactory(char *actionString) {
     const ActionEnum actionEnum = actionFromString(actionString);
-    if (actionFromString(actionString) == ACTION_COUNT) {
+    if (actionEnum == ACTION_COUNT) {
         return NULL;
     }
 

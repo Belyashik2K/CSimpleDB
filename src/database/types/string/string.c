@@ -139,7 +139,7 @@ CustomString *stringFactory(char *string, const char *field) {
 
     customString->value = (char *) mallocWrapper(strlen(string) + 1);
     if (customString->value == NULL) {
-        free(customString);
+        freeString(customString);
         return NULL;
     }
 
@@ -149,8 +149,7 @@ CustomString *stringFactory(char *string, const char *field) {
 
     customString->field = strdupWrapper(field);
     if (customString->field == NULL) {
-        free(customString->value);
-        free(customString);
+        freeString(customString);
         return NULL;
     }
 

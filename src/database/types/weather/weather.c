@@ -163,7 +163,7 @@ int equalWeather(Weather *self, char *other) {
     if (!otherWeather) return 0;
 
     const int result = self->value == otherWeather->value;
-    free(otherWeather);
+    freeWeather(otherWeather);
     return result;
 }
 
@@ -191,7 +191,7 @@ int updateWeatherField(Weather *self, char *newValue) {
     if (!newWeather) return 0;
 
     self->value = newWeather->value;
-    free(newWeather);
+    freeWeather(newWeather);
     return 1;
 }
 

@@ -384,7 +384,7 @@ int findConditions(char **line, Query *query) {
 }
 
 Query *queryFactory(char *queryStr) {
-    char *queryStrPtr = strdup(queryStr);
+    char *queryStrPtr = strdupWrapper(queryStr);
     char *queryStrCopy = queryStrPtr;
     if (!queryStrCopy)
         return NULL;

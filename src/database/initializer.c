@@ -5,7 +5,7 @@
 #include "../utils/mem_profiler/helper.h"
 
 Database *initializeDatabase() {
-    Database *database = (Database *) malloc(sizeof(Database));
+    Database *database = (Database *) mallocWrapper(sizeof(Database));
     if (!database) return NULL;
     database->head = NULL;
     database->tail = NULL;
@@ -23,6 +23,5 @@ void freeDatabase(Database *database) {
         RecordNode *next = current->next;
         freeRecordNode(current);
         current = next;
-        freeWrapper(current);
     }
 }

@@ -174,7 +174,7 @@ CustomInt *intFactory(char *intString, const char *field) {
 
     customInt->field = strdupWrapper(field);
     if (!customInt->field) {
-        free(customInt);
+        freeInt(customInt);
         return NULL;
     }
 

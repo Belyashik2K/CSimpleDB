@@ -4,15 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern int mallocCount = 0;
-extern int callocCount = 0;
-extern int reallocCount = 0;
-extern int strdupCount = 0;
-extern int freeCount = 0;
+int mallocCount = 0;
+int callocCount = 0;
+int reallocCount = 0;
+int strdupCount = 0;
+int freeCount = 0;
 
 void *mallocWrapper(size_t size) {
     void *ptr = malloc(size);
-    if (ptr == NULL) return NULL;
+    if (ptr == NULL) {
+        printf("malloc failed\n");
+        return NULL;
+    }
 
     mallocCount++;
     return ptr;
@@ -20,7 +23,10 @@ void *mallocWrapper(size_t size) {
 
 void *callocWrapper(size_t num, size_t size) {
     void *ptr = calloc(num, size);
-    if (ptr == NULL) return NULL;
+    if (ptr == NULL) {
+        printf("calloc failed\n");
+        return NULL;
+    }
 
     callocCount++;
     return ptr;
@@ -40,14 +46,19 @@ char *strdupWrapper(const char *str) {
     if (str == NULL) return NULL;
 
     char *result = strdup(str);
-    if (result == NULL) return NULL;
+    if (result == NULL) {
+        printf("strdup failed\n");
+        return NULL;
+    }
 
     strdupCount++;
     return result;
 }
 
 void _freeWrapper(void **ptr) {
-    if (ptr == NULL || *ptr == NULL) return;
+    if (ptr == NULL || *ptr == NULL) {
+        return;
+    }
 
     free(*ptr);
     *ptr = NULL;
