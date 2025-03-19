@@ -20,5 +20,6 @@ typedef struct {
 
 Query *queryFactory(char *queryStr);
 char *trimWhitespace(char *str);
+void freeQuery(Query *query);
 
 #endif

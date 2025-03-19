@@ -17,10 +17,11 @@ void freeCondition(Condition *condition) {
     freeWrapper(condition->field);
     freeWrapper(condition->comparison);
     freeWrapper(condition->value);
+    freeWrapper(condition);
 }
 
 void freeConditions(Condition **conditions, int conditionCount) {
-    if (!conditions) {
+    if (!conditions || !*conditions) {
         return;
     }
     for (int i = 0; i < conditionCount; i++) {
@@ -36,6 +37,7 @@ void freeField(QueryField *field) {
     }
     freeWrapper(field->field);
     freeWrapper(field->value);
+    freeWrapper(field);
 }
 
 void freeFields(QueryField **fields, int fieldCount) {
@@ -44,10 +46,18 @@ void freeFields(QueryField **fields, int fieldCount) {
     }
     for (int i = 0; i < fieldCount; i++) {
         QueryField *field = fields[i];
-        freeWrapper(field->field);
-        freeWrapper(field->value);
+        freeField(field);
     }
     freeWrapper(fields);
+}
+
+void freeQuery(Query *query) {
+    if (!query) {
+        return;
+    }
+    freeFields(query->fields, query->field_count);
+    freeConditions(query->conditions, query->condition_count);
+    freeWrapper(query);
 }
 
 int checkForScreeningInQuery(const char *line, const int index) {
@@ -157,7 +167,7 @@ QueryField *queryFieldFactory(char *fieldString) {
 }
 
 Condition *conditionFactory(char *conditionString) {
-    Condition *condition = (Condition *) malloc(sizeof(Condition));
+    Condition *condition = (Condition *) mallocWrapper(sizeof(Condition));
     if (!condition) {
         return NULL;
     }
@@ -227,14 +237,14 @@ char *findAction(char **line) {
         (*line)++;
     }
 
-    char *action = (char *) malloc(endIndex + 1);
+    char *action = (char *) mallocWrapper(endIndex + 1);
     strncpy(action, *line - endIndex, endIndex);
     action[endIndex] = '\0';
     return action;
 }
 
 int findFields(char **line, Query *query) {
-    QueryField **fields = (QueryField **) malloc(sizeof(QueryField *));
+    QueryField **fields = (QueryField **) mallocWrapper(sizeof(QueryField *));
     *line = skipSpaces(*line);
 
     int inQuotes = 0;
@@ -327,7 +337,7 @@ int findFields(char **line, Query *query) {
 }
 
 int findConditions(char **line, Query *query) {
-    Condition **conditions = (Condition **) malloc(sizeof(Condition *));
+    Condition **conditions = (Condition **) mallocWrapper(sizeof(Condition *));
     *line = skipSpaces(*line);
 
     int inQuotes = 0;
@@ -358,6 +368,7 @@ int findConditions(char **line, Query *query) {
                 conditions[conditionsCount++] = condition;
             }
 
+            freeWrapper(field);
             startPtr = *line + i;
         }
 
@@ -381,14 +392,14 @@ Query *queryFactory(char *queryStr) {
 
     char *actionStr = findAction(&queryStrCopy);
     const Action *action = actionFactory(actionStr);
+    freeWrapper(actionStr);
+
     if (!action) {
-        free(actionStr);
-        // free(queryStrCopy);
+        freeWrapper(queryStrPtr);
         return NULL;
     }
 
-    Query *query = (Query *) malloc(sizeof(Query));
-
+    Query *query = (Query *) mallocWrapper(sizeof(Query));
     if (!query) {
         return NULL;
     }
@@ -401,6 +412,7 @@ Query *queryFactory(char *queryStr) {
             // return NULL;
         }
     } else {
+        query->fields = NULL;
         query->field_count = 0;
     }
 
@@ -418,7 +430,8 @@ Query *queryFactory(char *queryStr) {
         query->action.value == UNIQUE && query->field_count == 0 ||
         query->action.value == INSERT && query->condition_count != 0
     ) {
-        free(query);
+        freeWrapper(queryStrPtr);
+        freeQuery(query);
         return NULL;
     }
 
@@ -432,7 +445,8 @@ Query *queryFactory(char *queryStr) {
                 !query->fields[i]->value && query->action.value == INSERT ||
                 !query->fields[i]->value && query->action.value == SORT
             ) {
-                free(query);
+                freeWrapper(queryStrPtr);
+                freeQuery(query);
                 return NULL;
             }
         }
@@ -441,13 +455,12 @@ Query *queryFactory(char *queryStr) {
     if (query->condition_count != 0) {
         if (query->action.value == DELETE) {
             if (query->condition_count >= 1 && !query->conditions[0]->field && !query->conditions[0]->value) {
-                query->condition_count = 0;
-                free(query->conditions);
-                free(query);
+                freeQuery(query);
                 return NULL;
             }
         }
     }
 
+    freeWrapper(queryStrPtr);
     return query;
 }
