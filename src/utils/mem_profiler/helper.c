@@ -49,7 +49,7 @@ char *strdupWrapper(const char *str) {
 void _freeWrapper(void **ptr) {
     if (ptr == NULL || *ptr == NULL) return;
 
-    freeCount++;
     free(*ptr);
     *ptr = NULL;
+    freeCount++;
 }
