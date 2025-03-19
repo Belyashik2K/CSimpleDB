@@ -32,5 +32,7 @@ int isSatisfiedByCondition(Record *record, Condition *condition);
 int updateRecord(Record *record, QueryField *new_data);
 char *getFieldStringRepresentation(const char *field, Record *record);
 int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option, QueryField *field);
+void freeRecord(Record *record);
+void freeRecordNode(RecordNode *node);
 
 #endif

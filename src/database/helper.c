@@ -1,3 +1,5 @@
+#include "../utils/mem_profiler/helper.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,12 +12,12 @@
 int makeInsertQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
 
-    RecordNode *newNode = (RecordNode *) malloc(sizeof(RecordNode));
+    RecordNode *newNode = (RecordNode *) mallocWrapper(sizeof(RecordNode));
     if (!newNode) return 0;
 
     Record *record = recordFactory(query);
     if (!record) {
-        free(newNode);
+        freeRecordNode(newNode);
         return 0;
     }
 
@@ -110,8 +112,7 @@ int makeDeleteQuery(Database *db, Query *query) {
                 db->tail = prev;
             }
 
-            free(current->data);
-            free(current);
+            freeRecordNode(current);
             db->size--;
         } else {
             prev = current;
@@ -193,8 +194,7 @@ int makeUniqQuery(Database *db, Query *query) {
                 db->tail = prev;
             }
 
-            free(current->data);
-            free(current);
+            freeRecordNode(current);
             db->size--;
             deletedCount++;
             current = nextNode;

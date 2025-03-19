@@ -2,8 +2,8 @@
 // Created by Belyashik2K on 10.03.2025.
 //
 
-#ifndef HELPER_H
-#define HELPER_H
+#ifndef HELPER2_H
+#define HELPER2_H
 
 #include <stddef.h>
 
@@ -26,4 +26,4 @@ char *strdupWrapper(const char *str);
 void _freeWrapper(void **ptr);
 
 
-#endif //HELPER_H
+#endif //HELPER2_H

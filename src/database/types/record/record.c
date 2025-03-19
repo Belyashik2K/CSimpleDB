@@ -6,6 +6,13 @@
 #include "../query/query.h"
 #include "../../../utils/mem_profiler/helper.h"
 
+void freeRecordNode(RecordNode *node) {
+    if (!node) return;
+
+    freeRecord(node->data);
+    freeWrapper(node);
+}
+
 void freeRecord(Record *record) {
     if (!record) return;
 
