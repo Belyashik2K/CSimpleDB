@@ -165,13 +165,18 @@ int makeUniqQuery(Database *db, Query *query) {
 
             for (int i = 0; i < query->field_count; i++) {
                 QueryField *field = query->fields[i];
-                const char *currentValue = getFieldStringRepresentation(field->field, current->data);
-                const char *runnerValue = getFieldStringRepresentation(field->field, runner->data);
+                char *currentValue = getFieldStringRepresentation(field->field, current->data);
+                char *runnerValue = getFieldStringRepresentation(field->field, runner->data);
 
                 if (strcmp(currentValue, runnerValue) != 0) {
                     fieldsMatch = 0;
+                    freeWrapper(currentValue);
+                    freeWrapper(runnerValue);
                     break;
                 }
+
+                freeWrapper(currentValue);
+                freeWrapper(runnerValue);
             }
 
             if (fieldsMatch) {

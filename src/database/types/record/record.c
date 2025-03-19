@@ -66,7 +66,11 @@ char *jumpToEqualSign(char *str) {
 
 #define COMPARE_TWO_RECORDS(name, field) \
     int compareTwo##name(Record *record, Record *other, ComparisonOptionEnum option) { \
-        return record->field->compare(record->field, jumpToEqualSign(get##name##StringRepresentation(other)), option); \
+        char *otherVal = get##name##StringRepresentation(other); \
+        if (!otherVal) return 0; \
+        int result = record->field->compare(record->field, otherVal, option); \
+        freeWrapper(otherVal); \
+        return result; \
     }
 
 #define REGISTER_FIELD(name, field, type, factory, freeFunc) \

@@ -116,7 +116,7 @@ void writeMemstat() {
     fprintf(file, "strdup:%d\n", strdupCount);
     fprintf(file, "free:%d\n", freeCount);
 
-    fprintf(file, "total:%d\n", mallocCount + callocCount + reallocCount + strdupCount - freeCount);
+    fprintf(file, "not unloaded:%d\n", mallocCount + callocCount + strdupCount - freeCount);
 
     fclose(file);
 }

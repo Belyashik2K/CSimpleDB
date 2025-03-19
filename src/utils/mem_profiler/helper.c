@@ -34,9 +34,13 @@ void *callocWrapper(size_t num, size_t size) {
 
 void *reallocWrapper(void *ptr, size_t size) {
     if (ptr == NULL) return mallocWrapper(size);
+    if (size == 0) {
+        freeWrapper(ptr);
+        return NULL;
+    }
 
     void *newPtr = realloc(ptr, size);
-    if (newPtr == NULL) return NULL;
+    if (newPtr == NULL) return ptr;
 
     reallocCount++;
     return newPtr;
@@ -57,6 +61,7 @@ char *strdupWrapper(const char *str) {
 
 void _freeWrapper(void **ptr) {
     if (ptr == NULL || *ptr == NULL) {
+        printf("free failed\n");
         return;
     }
 
