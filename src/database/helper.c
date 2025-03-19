@@ -14,6 +14,8 @@ int makeInsertQuery(Database *db, Query *query) {
 
     RecordNode *newNode = (RecordNode *) mallocWrapper(sizeof(RecordNode));
     if (!newNode) return 0;
+    newNode->data = NULL;
+    newNode->next = NULL;
 
     Record *record = recordFactory(query);
     if (!record) {

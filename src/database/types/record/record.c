@@ -1,8 +1,10 @@
 #include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "../record/record.h"
+
+#include <stdio.h>
+
 #include "../query/query.h"
 #include "../../../utils/mem_profiler/helper.h"
 

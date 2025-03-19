@@ -1,6 +1,9 @@
 #include <stdlib.h>
 
 #include "../database/initializer.h"
+
+#include <stdio.h>
+
 #include "../database/helper.h"
 #include "../utils/mem_profiler/helper.h"
 
@@ -24,4 +27,5 @@ void freeDatabase(Database *database) {
         freeRecordNode(current);
         current = next;
     }
+    freeWrapper(database);
 }

@@ -257,6 +257,7 @@ int findFields(char **line, Query *query) {
         query->field_count = 0;
         query->fields = NULL;
         freeFields(fields, fieldCount);
+        return 0;
     }
 
     const char *startPtr = *line;
@@ -455,6 +456,7 @@ Query *queryFactory(char *queryStr) {
     if (query->condition_count != 0) {
         if (query->action.value == DELETE) {
             if (query->condition_count >= 1 && !query->conditions[0]->field && !query->conditions[0]->value) {
+                freeWrapper(queryStrPtr);
                 freeQuery(query);
                 return NULL;
             }

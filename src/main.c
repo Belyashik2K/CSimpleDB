@@ -12,7 +12,7 @@
 
 #include "utils/mem_profiler/helper.h"
 
-#define INPUT_FILE "../tests/insert.txt"
+#define INPUT_FILE "../tests/ibks_1.txt"
 
 int main(void) {
     prepareOutputFile();
@@ -83,6 +83,7 @@ int main(void) {
     if (!parsed) {
         printf("Parsing failed, maybe the file does not exist?\n");
         freeDatabase(database);
+        writeMemstat();
         return 1;
     }
 
