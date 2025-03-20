@@ -41,7 +41,7 @@ int checkBackslashScreening(const char *string, int *index) {
 
 char *stringToString(CustomString *self) {
     const int bufSize = strlen(self->field) + strlen(self->value) + 50;
-    char *buffer = (char *) malloc(bufSize);
+    char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
     snprintf(buffer, bufSize, "%s=\"%s\"", self->field, self->value);
     return buffer;

@@ -281,11 +281,13 @@ int findFields(char **line, Query *query) {
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
-                if (!sortFactory(fields[fieldCount - 1]->value)) {
+                Sort *sortOperator = sortFactory(fields[fieldCount - 1]->value);
+                if (!sortOperator) {
                     freeWrapper(field);
                     freeFields(fields, fieldCount);
                     return 0;
                 }
+                freeSort(sortOperator);
             }
 
             freeWrapper(field);
@@ -309,11 +311,13 @@ int findFields(char **line, Query *query) {
             fields[fieldCount++] = fieldObj;
 
             if (query->action.value == SORT) {
-                if (!sortFactory(fields[fieldCount - 1]->value)) {
+                Sort *sortOperator = sortFactory(fields[fieldCount - 1]->value);
+                if (!sortOperator) {
                     freeWrapper(field);
                     freeFields(fields, fieldCount);
                     return 0;
                 }
+                freeSort(sortOperator);
             }
 
             lastIndexOfField = i;

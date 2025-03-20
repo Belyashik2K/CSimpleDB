@@ -94,7 +94,7 @@ int validateValuesInList(const char *input) {
 }
 
 int findInList(Weather *self, char *other) {
-    char *tempPtr = strdup(other);
+    char *tempPtr = strdupWrapper(other);
     char *temp = tempPtr;
 
     if (!temp) {
