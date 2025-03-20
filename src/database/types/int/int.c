@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "../int/int.h"
 #include "../../../utils/mem_profiler/helper.h"

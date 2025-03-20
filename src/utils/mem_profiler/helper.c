@@ -13,7 +13,6 @@ int freeCount = 0;
 void *mallocWrapper(size_t size) {
     void *ptr = malloc(size);
     if (ptr == NULL) {
-        printf("malloc failed\n");
         return NULL;
     }
 
@@ -24,7 +23,6 @@ void *mallocWrapper(size_t size) {
 void *callocWrapper(size_t num, size_t size) {
     void *ptr = calloc(num, size);
     if (ptr == NULL) {
-        printf("calloc failed\n");
         return NULL;
     }
 
@@ -61,7 +59,6 @@ char *strdupWrapper(const char *str) {
 
 void _freeWrapper(void **ptr) {
     if (ptr == NULL || *ptr == NULL) {
-        printf("free failed\n");
         return;
     }
 

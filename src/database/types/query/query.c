@@ -349,7 +349,7 @@ int findConditions(char **line, Query *query) {
     if (strLength == 0) {
         query->condition_count = 0;
         query->conditions = NULL;
-        freeConditions(conditions, conditionsCount);
+        freeWrapper(conditions);
         return 0;
     }
 
@@ -405,6 +405,7 @@ Query *queryFactory(char *queryStr) {
         return NULL;
     }
     query->action = *action;
+    freeWrapper(action);
 
     if (query->action.value != DELETE) {
         int isFieldsFound = findFields(&queryStrCopy, query);
