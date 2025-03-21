@@ -163,7 +163,12 @@ CustomInt *intFactory(char *intString, const char *field) {
         if (isZero) {
             value = 0;
         } else {
-            value = -atoi(intString);
+            if (strcmp(intString, "2147483648") == 0) {
+                value = INT_MIN;
+            }
+            else {
+                value = -atoi(intString);
+            }
         }
     } else {
         value = atoi(intString);
