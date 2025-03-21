@@ -20,8 +20,8 @@ void *mallocWrapper(size_t size) {
     return ptr;
 }
 
-void *callocWrapper(size_t num, size_t size) {
-    void *ptr = calloc(num, size);
+void *callocWrapper(size_t count, size_t size) {
+    void *ptr = calloc(count, size);
     if (ptr == NULL) {
         return NULL;
     }
