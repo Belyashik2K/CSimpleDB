@@ -72,7 +72,7 @@ char *intToString(CustomInt *self) {
     const int bufSize = strlen(self->field) + 50;
     char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
-    snprintf(buffer, bufSize, "%s=%d", self->field, self->value);
+    sprintf(buffer, "%s=%d", self->field, self->value);
     return buffer;
 }
 

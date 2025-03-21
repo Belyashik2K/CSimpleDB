@@ -81,7 +81,7 @@ char *timeToString(Time *self) {
     const int bufSize = strlen(self->field) + 50;
     char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
-    snprintf(buffer, bufSize, "%s='%02d:%02d:%02d'", self->field, self->hour, self->minute, self->second);
+    sprintf(buffer, "%s='%02d:%02d:%02d'", self->field, self->hour, self->minute, self->second);
     return buffer;
 }
 

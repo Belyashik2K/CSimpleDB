@@ -47,7 +47,7 @@ char *dateToString(Date *self) {
     const int bufSize = strlen(self->field) + 50;
     char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
-    snprintf(buffer, bufSize, "%s='%02d.%02d.%02d'", self->field, self->day, self->month, self->year);
+    sprintf(buffer, "%s='%02d.%02d.%02d'", self->field, self->day, self->month, self->year);
     return buffer;
 }
 

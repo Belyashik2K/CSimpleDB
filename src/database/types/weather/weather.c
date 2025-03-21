@@ -24,7 +24,7 @@ char *weatherToString(Weather *self) {
     const int bufSize = strlen(self->field) + strlen(weather_strings[self->value]) + 50;
     char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
-    snprintf(buffer, bufSize, "%s='%s'", self->field, weather_strings[self->value]);
+    sprintf(buffer, "%s='%s'", self->field, weather_strings[self->value]);
     return buffer;
 }
 
