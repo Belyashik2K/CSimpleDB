@@ -6,6 +6,7 @@
 
 #include "../../database/types/query/action/action.h"
 #include "../../database/types/record/record.h"
+#include "../mem_profiler/helper.h"
 
 #define OUTPUT_FILE "../output.txt"
 #define MEMSTAT_FILE "../memstat.txt"
@@ -23,34 +24,27 @@ void prepareMemstatFile() {
 }
 
 char *prepareSelectResult(Record *record, Query *query) {
-    char *result = (char *) calloc(1, sizeof(char));
+    char *result = (char *) callocWrapper(1, sizeof(char));
     if (!result) {
-        printf("Could not allocate memory\n");
         return NULL;
     }
+
     for (int i = 0; i < query->field_count; i++) {
-        const QueryField field = query->fields[i];
-        char *fieldString = getFieldStringRepresentation(field.field, record);
+        QueryField *field = query->fields[i];
 
+        char *fieldString = getFieldStringRepresentation(field->field, record);
         if (!fieldString) {
-            free(result);
+            freeWrapper(result);
             return NULL;
         }
 
-        char *new_result = (char *) realloc(result, strlen(result) + strlen(fieldString) + 2);
-        if (!new_result) {
-            printf("Could not reallocate memory\n");
-            free(result);
-            free(fieldString);
-            return NULL;
-        }
-
-        result = new_result;
+        result = (char *) reallocWrapper(result, strlen(result) + strlen(fieldString) + 2);
         strcat(result, fieldString);
         if (i < query->field_count - 1) {
             strcat(result, " ");
         }
-        free(fieldString);
+
+        freeWrapper(fieldString);
     }
 
     return result;
@@ -90,19 +84,17 @@ void writeCountOfAffectedRecordsToFile(const ActionEnum action, const int count)
 void writeSelectResultToFile(Record *record, Query *query) {
     FILE *file = fopen(OUTPUT_FILE, "a");
     if (!file) {
-        printf("Could not open file for writing\n");
         return;
     }
 
     char *result = prepareSelectResult(record, query);
     if (!result) {
-        printf("Could not prepare select result\n");
         fclose(file);
         return;
     }
 
     fprintf(file, "%s\n", result);
-    free(result);
+    freeWrapper(result);
     fclose(file);
 }
 
@@ -118,9 +110,13 @@ void writeMemstat() {
     FILE *file = fopen(MEMSTAT_FILE, "w");
     if (!file) return;
 
-    fprintf(file, "malloc:55\n");
-    fprintf(file, "realloc:7\n");
-    fprintf(file, "calloc:55\n");
-    fprintf(file, "free:110\n");
+    fprintf(file, "malloc:%d\n", mallocCount);
+    fprintf(file, "calloc:%d\n", callocCount);
+    fprintf(file, "realloc:%d\n", reallocCount);
+    fprintf(file, "strdup:%d\n", strdupCount);
+    fprintf(file, "free:%d\n", freeCount);
+
+    fprintf(file, "not unloaded:%d\n", mallocCount + callocCount + strdupCount - freeCount);
+
     fclose(file);
 }

@@ -1,8 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "../int/int.h"
+#include "../../../utils/mem_profiler/helper.h"
+
+void freeInt(CustomInt *customInt) {
+    if (!customInt) return;
+
+    freeWrapper(customInt->field);
+    freeWrapper(customInt);
+}
 
 int isValueNegative(const char *intString) {
     return intString[0] == '-';
@@ -61,9 +70,9 @@ int isInsideIntBounds(const char *str, const int isNegative) {
 
 char *intToString(CustomInt *self) {
     const int bufSize = strlen(self->field) + 50;
-    char *buffer = (char *) malloc(bufSize);
+    char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
-    snprintf(buffer, bufSize, "%s=%d", self->field, self->value);
+    sprintf(buffer, "%s=%d", self->field, self->value);
     return buffer;
 }
 
@@ -71,7 +80,10 @@ int equalInt(CustomInt *self, char *other) {
     CustomInt *otherInt = intFactory(other, self->field);
     if (!otherInt) return 0;
 
-    return self->value == otherInt->value;
+    int result = self->value == otherInt->value;
+    freeInt(otherInt);
+
+    return result;
 }
 
 int notEqualInt(CustomInt *self, char *other) {
@@ -82,7 +94,10 @@ int lessInt(CustomInt *self, char *other) {
     CustomInt *otherInt = intFactory(other, self->field);
     if (!otherInt) return 0;
 
-    return self->value < otherInt->value;
+    int result = self->value < otherInt->value;
+    freeInt(otherInt);
+
+    return result;
 }
 
 int greaterInt(CustomInt *self, char *other) {
@@ -121,6 +136,8 @@ int updateInt(CustomInt *self, char *newValue) {
     if (!newInt) return 0;
 
     self->value = newInt->value;
+    freeInt(newInt);
+
     return 1;
 }
 
@@ -146,19 +163,24 @@ CustomInt *intFactory(char *intString, const char *field) {
         if (isZero) {
             value = 0;
         } else {
-            value = -atoi(intString);
+            if (strcmp(intString, "2147483648") == 0) {
+                value = INT_MIN;
+            }
+            else {
+                value = -atoi(intString);
+            }
         }
     } else {
         value = atoi(intString);
     }
 
-    CustomInt *customInt = (CustomInt *) malloc(sizeof(CustomInt));
+    CustomInt *customInt = (CustomInt *) mallocWrapper(sizeof(CustomInt));
     if (customInt == NULL) return NULL;
     customInt->value = value;
 
-    customInt->field = strdup(field);
+    customInt->field = strdupWrapper(field);
     if (!customInt->field) {
-        free(customInt);
+        freeInt(customInt);
         return NULL;
     }
 

@@ -13,5 +13,6 @@ typedef struct CustomInt {
 } CustomInt;
 
 CustomInt *intFactory(char *intString, const char *field);
+void freeInt(CustomInt *customInt);
 
 #endif

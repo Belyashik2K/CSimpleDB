@@ -13,5 +13,7 @@ typedef struct CustomString {
 } CustomString;
 
 CustomString *stringFactory(char *string, const char *field);
+void freeString(CustomString *customString);
+int updateString(CustomString *self, char *newValue);
 
 #endif

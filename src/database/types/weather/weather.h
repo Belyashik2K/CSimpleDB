@@ -21,5 +21,6 @@ typedef struct Weather {
 } Weather;
 
 Weather *weatherFactory(const char *weatherString, const char *field);
+void freeWeather(Weather *weather);
 
 #endif

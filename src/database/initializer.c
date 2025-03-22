@@ -1,10 +1,14 @@
 #include <stdlib.h>
 
 #include "../database/initializer.h"
+
+#include <stdio.h>
+
 #include "../database/helper.h"
+#include "../utils/mem_profiler/helper.h"
 
 Database *initializeDatabase() {
-    Database *database = (Database *) malloc(sizeof(Database));
+    Database *database = (Database *) mallocWrapper(sizeof(Database));
     if (!database) return NULL;
     database->head = NULL;
     database->tail = NULL;
@@ -20,9 +24,8 @@ void freeDatabase(Database *database) {
     RecordNode *current = database->head;
     while (current) {
         RecordNode *next = current->next;
-        free(current->data);
-        free(current);
+        freeRecordNode(current);
         current = next;
     }
-    free(database);
+    freeWrapper(database);
 }

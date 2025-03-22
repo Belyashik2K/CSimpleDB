@@ -1,3 +1,5 @@
+#include "../utils/mem_profiler/helper.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,12 +12,14 @@
 int makeInsertQuery(Database *db, Query *query) {
     if (!db || !query) return 0;
 
-    RecordNode *newNode = (RecordNode *) malloc(sizeof(RecordNode));
+    RecordNode *newNode = (RecordNode *) mallocWrapper(sizeof(RecordNode));
     if (!newNode) return 0;
+    newNode->data = NULL;
+    newNode->next = NULL;
 
     Record *record = recordFactory(query);
     if (!record) {
-        free(newNode);
+        freeRecordNode(newNode);
         return 0;
     }
 
@@ -39,7 +43,7 @@ int checkIfRecordSatisfiesConditions(Record *record, Query *query) {
     if (!record || !query) return 0;
 
     for (int i = 0; i < query->condition_count; i++) {
-        if (!isSatisfiedByCondition(record, &query->conditions[i])) {
+        if (!isSatisfiedByCondition(record, query->conditions[i])) {
             return 0;
         }
     }
@@ -110,8 +114,7 @@ int makeDeleteQuery(Database *db, Query *query) {
                 db->tail = prev;
             }
 
-            free(current->data);
-            free(current);
+            freeRecordNode(current);
             db->size--;
         } else {
             prev = current;
@@ -136,8 +139,8 @@ int makeUpdateQuery(Database *db, Query *query) {
         }
 
         for (int i = 0; i < query->field_count; i++) {
-            QueryField field = query->fields[i];
-            updateRecord(current->data, &field);
+            QueryField *field = query->fields[i];
+            updateRecord(current->data, field);
         }
         updatedRecords++;
         current = current->next;
@@ -163,14 +166,19 @@ int makeUniqQuery(Database *db, Query *query) {
             int fieldsMatch = 1;
 
             for (int i = 0; i < query->field_count; i++) {
-                const QueryField field = query->fields[i];
-                const char *currentValue = getFieldStringRepresentation(field.field, current->data);
-                const char *runnerValue = getFieldStringRepresentation(field.field, runner->data);
+                QueryField *field = query->fields[i];
+                char *currentValue = getFieldStringRepresentation(field->field, current->data);
+                char *runnerValue = getFieldStringRepresentation(field->field, runner->data);
 
                 if (strcmp(currentValue, runnerValue) != 0) {
                     fieldsMatch = 0;
+                    freeWrapper(currentValue);
+                    freeWrapper(runnerValue);
                     break;
                 }
+
+                freeWrapper(currentValue);
+                freeWrapper(runnerValue);
             }
 
             if (fieldsMatch) {
@@ -193,8 +201,7 @@ int makeUniqQuery(Database *db, Query *query) {
                 db->tail = prev;
             }
 
-            free(current->data);
-            free(current);
+            freeRecordNode(current);
             db->size--;
             deletedCount++;
             current = nextNode;
@@ -216,9 +223,9 @@ RecordNode *merge(RecordNode *left, RecordNode *right, Query *query) {
         int compareResult = 0;
 
         for (int i = 0; i < query->field_count && compareResult == 0; i++) {
-            QueryField field = query->fields[i];
-            ComparisonOptionEnum option = strcmp(query->fields[i].value, "asc") == 0 ? GREATER : LESS;
-            compareResult = compareTwoRecords(left->data, right->data, option, &field);
+            QueryField *field = query->fields[i];
+            ComparisonOptionEnum option = strcmp(query->fields[i]->value, "asc") == 0 ? GREATER : LESS;
+            compareResult = compareTwoRecords(left->data, right->data, option, field);
         }
 
         if (compareResult <= 0) {
@@ -286,26 +293,26 @@ int validateFieldsAndConditions(Query *query) {
     if (!query) return 0;
 
     for (int i = 0; i < query->field_count; i++) {
-        const QueryField field = query->fields[i];
+        QueryField *field = query->fields[i];
 
-        if (!validateKey(field.field)) {
-            printf("Invalid field: %s\n", field.field);
+        if (!validateKey(field->field)) {
+            printf("Invalid field: %s\n", field->field);
             return 0;
         }
-        if (strcmp(field.field, "weather") == 0 && query->action.value == SORT) {
+        if (strcmp(field->field, "weather") == 0 && query->action.value == SORT) {
             return 0;
         }
 
         if (query->action.value != SELECT && query->action.value != UNIQUE && query->action.value != SORT) {
-            if (!validateValue(field.field, field.value)) {
-                printf("Invalid value for field: %s\n", field.field);
+            if (!validateValue(field->field, field->value)) {
+                printf("Invalid value for field: %s\n", field->field);
                 return 0;
             }
         }
     }
 
     for (int i = 0; i < query->condition_count; i++) {
-        const Condition condition = query->conditions[i];
+        const Condition condition = *query->conditions[i];
 
         if (!validateKey(condition.field)) {
             printf("Invalid condition: %s\n", condition.field);

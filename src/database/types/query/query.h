@@ -11,14 +11,15 @@ typedef struct {
 
 typedef struct {
     Action action;
-    QueryField *fields;
+    QueryField **fields;
     int field_count;
-    Condition *conditions;
+    Condition **conditions;
     int condition_count;
 } Query;
 
 
 Query *queryFactory(char *queryStr);
 char *trimWhitespace(char *str);
+void freeQuery(Query *query);
 
 #endif

@@ -3,8 +3,15 @@
 #include <string.h>
 
 #include "../date/date.h"
-#include "../query/comparison/comparison.h"
+#include "../query/comparison/comparison.h".
+#include "../../../utils/mem_profiler/helper.h"
 
+void freeDate(Date *date) {
+    if (!date) return;
+
+    freeWrapper(date->field);
+    freeWrapper(date);
+}
 
 int is_leap_year(const int year) {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
@@ -38,9 +45,9 @@ int is_valid_date(
 
 char *dateToString(Date *self) {
     const int bufSize = strlen(self->field) + 50;
-    char *buffer = (char *) malloc(bufSize);
+    char *buffer = (char *) mallocWrapper(bufSize);
     if (!buffer) return NULL;
-    snprintf(buffer, bufSize, "%s='%02d.%02d.%02d'", self->field, self->day, self->month, self->year);
+    sprintf(buffer, "%s='%02d.%02d.%02d'", self->field, self->day, self->month, self->year);
     return buffer;
 }
 
@@ -48,7 +55,10 @@ int equalDate(const Date *self, char *other) {
     Date *otherDate = dateFactory(other, self->field);
     if (!otherDate) return 0;
 
-    return self->day == otherDate->day && self->month == otherDate->month && self->year == otherDate->year;
+    int result = self->day == otherDate->day && self->month == otherDate->month && self->year == otherDate->year;
+    freeDate(otherDate);
+
+    return result;
 }
 
 int notEqualDate(const Date *self, char *other) {
@@ -61,14 +71,16 @@ int lessDate(const Date *self, const char *other) {
         return 0;
     }
 
-    if (self->year < otherDate->year) return 1;
-    if (self->year > otherDate->year) return 0;
+    int result = 0;
+    if (self->year != otherDate->year)
+        result = self->year < otherDate->year;
+    else if (self->month != otherDate->month)
+        result = self->month < otherDate->month;
+    else
+        result = self->day < otherDate->day;
 
-    if (self->month < otherDate->month) return 1;
-    if (self->month > otherDate->month) return 0;
-
-    if (self->day < otherDate->day) return 1;
-    return 0;
+    freeDate(otherDate);
+    return result;
 }
 
 int greaterDate(const Date *self, char *other) {
@@ -110,6 +122,7 @@ int updateDate(Date *self, char *newValue) {
     self->month = newDate->month;
     self->year = newDate->year;
 
+    freeDate(newDate);
     return 1;
 }
 
@@ -124,16 +137,16 @@ Date *dateFactory(const char *dateString, const char *field) {
 
     if (!is_valid_date(day, month, year)) return NULL;
 
-    Date *date = (Date *) malloc(sizeof(Date));
+    Date *date = (Date *) mallocWrapper(sizeof(Date));
     if (date == NULL) return NULL;
 
     date->day = (char) day;
     date->month = (char) month;
     date->year = (short) year;
 
-    date->field = strdup(field);
+    date->field = strdupWrapper(field);
     if (!date->field) {
-        free(date);
+        freeDate(date);
         return NULL;
     }
 

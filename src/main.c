@@ -4,10 +4,9 @@
 #include "utils/parser/file_parser.h"
 #include "utils/writer/file_writer.h"
 
-#define INPUT_FILE "../tests/ibks_1.txt"
+#define INPUT_FILE "../tests/IBKS_tests/1/test.txt"
 
 int main(void) {
-
     prepareOutputFile();
 
     Database *database = initializeDatabase();
@@ -21,6 +20,7 @@ int main(void) {
     if (!parsed) {
         printf("Parsing failed, maybe the file does not exist?\n");
         freeDatabase(database);
+        writeMemstat();
         return 1;
     }
 

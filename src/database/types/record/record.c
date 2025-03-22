@@ -1,9 +1,32 @@
 #include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "../record/record.h"
+
+#include <stdio.h>
+
 #include "../query/query.h"
+#include "../../../utils/mem_profiler/helper.h"
+
+void freeRecordNode(RecordNode *node) {
+    if (!node) return;
+
+    freeRecord(node->data);
+    freeWrapper(node);
+}
+
+void freeRecord(Record *record) {
+    if (!record) return;
+
+    if (record->geo_id) freeInt(record->geo_id);
+    if (record->geo_pos) freeString(record->geo_pos);
+    if (record->mea_date) freeDate(record->mea_date);
+    if (record->level) freeInt(record->level);
+    if (record->sunrise) freeTime(record->sunrise);
+    if (record->sundown) freeTime(record->sundown);
+    if (record->weather) freeWeather(record->weather);
+    freeWrapper(record);
+}
 
 
 char *jumpToEqualSign(char *str) {
@@ -20,11 +43,11 @@ char *jumpToEqualSign(char *str) {
     return record->field != NULL; \
 }
 
-#define VALIDATE_FIELD(name, type, factory) \
+#define VALIDATE_FIELD(name, type, factory, freeFunc) \
     int validate##name(char *value) { \
         type* temp = factory(value, #name); \
         const int result = temp != NULL; \
-        if (temp) free(temp); \
+        if (temp) freeFunc(temp); \
         return result; \
     }
 
@@ -45,31 +68,35 @@ char *jumpToEqualSign(char *str) {
 
 #define COMPARE_TWO_RECORDS(name, field) \
     int compareTwo##name(Record *record, Record *other, ComparisonOptionEnum option) { \
-        return record->field->compare(record->field, jumpToEqualSign(get##name##StringRepresentation(other)), option); \
+        char *otherVal = get##name##StringRepresentation(other); \
+        if (!otherVal) return 0; \
+        int result = record->field->compare(record->field, otherVal, option); \
+        freeWrapper(otherVal); \
+        return result; \
     }
 
-#define REGISTER_FIELD(name, field, type, factory) \
+#define REGISTER_FIELD(name, field, type, factory, freeFunc) \
     INIT_FIELD(name, field, type, factory) \
-    VALIDATE_FIELD(name, type, factory) \
+    VALIDATE_FIELD(name, type, factory, freeFunc) \
     COMPARE_FIELD(name, field) \
     UPDATE_FIELD(name, field) \
     GET_STRING_REPRESENTATION(name, field) \
     COMPARE_TWO_RECORDS(name, field)
 
 
-REGISTER_FIELD(GeoId, geo_id, CustomInt, intFactory)
+REGISTER_FIELD(GeoId, geo_id, CustomInt, intFactory, freeInt)
 
-REGISTER_FIELD(GeoPos, geo_pos, CustomString, stringFactory)
+REGISTER_FIELD(GeoPos, geo_pos, CustomString, stringFactory, freeString)
 
-REGISTER_FIELD(MeaDate, mea_date, Date, dateFactory)
+REGISTER_FIELD(MeaDate, mea_date, Date, dateFactory, freeDate)
 
-REGISTER_FIELD(Level, level, CustomInt, intFactory)
+REGISTER_FIELD(Level, level, CustomInt, intFactory, freeInt)
 
-REGISTER_FIELD(Sunrise, sunrise, Time, timeFactory)
+REGISTER_FIELD(Sunrise, sunrise, Time, timeFactory, freeTime)
 
-REGISTER_FIELD(Sundown, sundown, Time, timeFactory)
+REGISTER_FIELD(Sundown, sundown, Time, timeFactory, freeTime)
 
-REGISTER_FIELD(Weather, weather, Weather, weatherFactory)
+REGISTER_FIELD(Weather, weather, Weather, weatherFactory, freeWeather)
 
 
 typedef struct {
@@ -230,22 +257,22 @@ int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option
 }
 
 Record *recordFactory(Query *query) {
-    Record *record = (Record *) malloc(sizeof(Record));
+    Record *record = (Record *) mallocWrapper(sizeof(Record));
     if (!record)
         return NULL;
 
     int seen[7] = {0};
     for (int i = 0; i < query->field_count; i++) {
-        const QueryField field = query->fields[i];
-        if (!processKey(field.field, field.value, record, seen)) {
-            free(record);
+        QueryField *field = query->fields[i];
+        if (!processKey(field->field, field->value, record, seen)) {
+            freeRecord(record);
             return NULL;
         }
     }
 
     for (int i = 0; i < 7; i++) {
         if (!seen[i]) {
-            free(record);
+            freeRecord(record);
             return NULL;
         }
     }

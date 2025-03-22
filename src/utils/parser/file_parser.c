@@ -33,6 +33,7 @@ int parseFile(const char *filename, Database *database) {
         if (!executionResult) {
             writeIncorrectLineToFile(line);
         }
+        freeQuery(query);
     }
 
     // printf("\nDatabase after parsing:\n");
