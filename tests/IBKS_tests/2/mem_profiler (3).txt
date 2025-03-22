@@ -1,8 +1,0 @@
-malloc:5379
-calloc:103
-realloc:969
-realloc0:0
-strdup:976
-free:1764
-disabled:0
-over_limits:0
