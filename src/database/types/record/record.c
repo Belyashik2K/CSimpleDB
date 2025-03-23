@@ -255,6 +255,14 @@ int compareTwoRecords(Record *record, Record *other, ComparisonOptionEnum option
 
 Record *recordFactory(Query *query) {
     Record *record = (Record *) mallocWrapper(sizeof(Record));
+    record->geo_id = NULL;
+    record->geo_pos = NULL;
+    record->mea_date = NULL;
+    record->level = NULL;
+    record->sunrise = NULL;
+    record->sundown = NULL;
+    record->weather = NULL;
+
     if (!record)
         return NULL;
 
