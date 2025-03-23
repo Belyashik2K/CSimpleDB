@@ -2,9 +2,6 @@
 #include <string.h>
 
 #include "../record/record.h"
-
-#include <stdio.h>
-
 #include "../query/query.h"
 #include "../../../utils/mem_profiler/helper.h"
 
@@ -70,7 +67,7 @@ char *jumpToEqualSign(char *str) {
     int compareTwo##name(Record *record, Record *other, ComparisonOptionEnum option) { \
         char *otherVal = get##name##StringRepresentation(other); \
         if (!otherVal) return 0; \
-        int result = record->field->compare(record->field, otherVal, option); \
+        int result = record->field->compare(record->field, jumpToEqualSign(otherVal), option); \
         freeWrapper(otherVal); \
         return result; \
     }
